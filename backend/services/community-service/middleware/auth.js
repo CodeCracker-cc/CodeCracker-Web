@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { promisify } = require('util');
 const axios = require('axios');
+const Post = require('../models/Post');
 
 exports.protect = async (req, res, next) => {
   try {

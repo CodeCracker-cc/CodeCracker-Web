@@ -4,15 +4,23 @@ const authMiddleware = require('../middleware/auth');
 
 const router = express.Router();
 
-router.get('/', challengeController.getChallenges);
+// Öffentliche Routen
+router.get('/challenges', challengeController.getChallenges);
+router.get('/challenges/:id', challengeController.getChallenge);
+router.get('/challenges/category/:category', challengeController.getChallengesByCategory);
+router.get('/challenges/difficulty/:level', challengeController.getChallengesByDifficulty);
 
+// Geschützte Routen
 router.use(authMiddleware.protect);
 
-router.post('/', 
-  authMiddleware.restrictTo('admin', 'moderator'),
-  challengeController.createChallenge
-);
+router.post('/challenges/:challengeId/submit', challengeController.submitSolution);
+router.get('/challenges/:challengeId/submissions', challengeController.getUserSubmissions);
 
-router.post('/:challengeId/submit', challengeController.submitSolution);
+// Admin/Moderator Routen
+router.use(authMiddleware.restrictTo('admin', 'moderator'));
+
+router.post('/challenges', challengeController.createChallenge);
+router.patch('/challenges/:id', challengeController.updateChallenge);
+router.delete('/challenges/:id', challengeController.deleteChallenge);
 
 module.exports = router; 

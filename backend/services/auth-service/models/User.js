@@ -23,15 +23,74 @@ const userSchema = new mongoose.Schema({
     enum: ['user', 'admin', 'moderator'],
     default: 'user'
   },
+  profileImage: {
+    type: String,
+    default: 'default.jpg'
+  },
+  bio: {
+    type: String,
+    maxLength: 500
+  },
+  stats: {
+    solvedChallenges: {
+      type: Number,
+      default: 0
+    },
+    totalPoints: {
+      type: Number,
+      default: 0
+    },
+    rank: {
+      type: Number,
+      default: 0
+    },
+    streak: {
+      type: Number,
+      default: 0
+    },
+    lastActive: {
+      type: Date,
+      default: Date.now
+    }
+  },
+  badges: [{
+    type: {
+      type: String,
+      enum: ['achievement', 'rank', 'special']
+    },
+    name: String,
+    description: String,
+    dateEarned: {
+      type: Date,
+      default: Date.now
+    }
+  }],
+  preferences: {
+    theme: {
+      type: String,
+      enum: ['light', 'dark'],
+      default: 'light'
+    },
+    language: {
+      type: String,
+      enum: ['de', 'en'],
+      default: 'de'
+    },
+    notifications: {
+      email: {
+        type: Boolean,
+        default: true
+      },
+      push: {
+        type: Boolean,
+        default: true
+      }
+    }
+  },
   twoFactorSecret: String,
   twoFactorEnabled: {
     type: Boolean,
     default: false
-  },
-  stats: {
-    solvedChallenges: Number,
-    totalPoints: Number,
-    rank: Number
   },
   createdAt: {
     type: Date,
@@ -45,5 +104,28 @@ userSchema.pre('save', async function(next) {
   }
   next();
 });
+
+userSchema.methods.updateStats = async function(challengePoints) {
+  this.stats.totalPoints += challengePoints;
+  this.stats.solvedChallenges += 1;
+  this.stats.lastActive = Date.now();
+  
+  const lastActiveDate = new Date(this.stats.lastActive);
+  const today = new Date();
+  const diffDays = Math.floor((today - lastActiveDate) / (1000 * 60 * 60 * 24));
+  
+  if (diffDays <= 1) {
+    this.stats.streak += 1;
+  } else {
+    this.stats.streak = 1;
+  }
+  
+  await this.save();
+};
+
+userSchema.methods.addBadge = async function(badgeData) {
+  this.badges.push(badgeData);
+  await this.save();
+};
 
 module.exports = mongoose.model('User', userSchema); 

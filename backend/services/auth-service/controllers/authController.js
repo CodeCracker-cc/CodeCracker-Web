@@ -80,6 +80,37 @@ class AuthController {
     }
   }
 
+  async verifyToken(req, res) {
+    try {
+      const { token } = req.body;
+      
+      if (!token) {
+        throw new Error('Token ist erforderlich');
+      }
+
+      const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+      const user = await User.findById(decoded.id);
+
+      if (!user) {
+        throw new Error('Der Benutzer existiert nicht mehr');
+      }
+
+      res.status(200).json({
+        status: 'success',
+        user: {
+          _id: user._id,
+          username: user.username,
+          role: user.role
+        }
+      });
+    } catch (err) {
+      res.status(401).json({
+        status: 'error',
+        message: 'Ungültiger Token'
+      });
+    }
+  }
+
   signToken(userId) {
     return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRES_IN
