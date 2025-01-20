@@ -382,5 +382,18 @@ body::-webkit-scrollbar-thumb:hover {
     color: #006eff;
 }
 
-
 /* ======== Account Links End ======== */
+
+/* ========== Streak ========== */
+
+.streak {
+    position: absolute;
+    top: 100px; /* Abstand vom oberen Rand */
+    right: 420px; /* Abstand vom rechten Rand */
+    color: white;
+    background-color: #111;
+    padding: 20px 40px;
+    border-radius: 20px;
+}
+
+/* ======== Streak End ======== */
