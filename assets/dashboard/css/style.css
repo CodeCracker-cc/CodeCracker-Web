@@ -7,6 +7,9 @@ body {
     font-family: 'Arial', sans-serif;
     min-height: 100vh;
     overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 155.6vh; /* Stellt sicher, dass der Footer am Ende bleibt */
 }
 
 body::before {
@@ -36,7 +39,9 @@ body::-webkit-scrollbar-thumb:hover {
 }
 /* ======== Body End ======== */
 
-
+main {
+    flex: 1; /* Füllt den verfügbaren Platz aus, damit der Footer nach unten rutscht */
+}
 
 
 /* ========== Navbar ========== */
@@ -415,3 +420,61 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 /* ======== Streak End ======== */
+
+/* ========== Footer ========== */
+
+/* Footer */
+.footer {
+    background-color: #111;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    border-top: 2px solid #444;
+    z-index: 99999999;
+}
+
+.footer-title {
+    font-size: 1.8em;
+    margin-bottom: 10px;
+    color: #74ebd5;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.footer-poweredby {
+    font-size: 1em;
+    color: #ccc;
+    margin-bottom: 10px;
+}
+
+.footer-social-media a {
+    color: #74ebd5;
+    text-decoration: none;
+    margin: 0 5px;
+    transition: color 0.3s ease-in-out;
+}
+
+.footer-social-media a:hover {
+    color: #acb6e5;
+}
+
+.footer-social-media {
+    font-size: 1em;
+    margin-top: 10px;
+}
+
+.footer-legal a {
+    color: #74ebd5;
+    text-decoration: none;
+    margin: 0 5px;
+    transition: color 0.3s ease-in-out;
+}
+
+.footer-legal a:hover {
+    color: #acb6e5;
+}
+.footer-legal {
+    font-size: 1em;
+    margin-top: 10px;
+}
+/* ======== Footer End ======== */
