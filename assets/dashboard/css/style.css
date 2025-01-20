@@ -393,30 +393,40 @@ main {
 
 .finish {
     position: absolute;
-    top: 100px; /* Abstand vom oberen Rand */
-    right: 740px; /* Abstand vom rechten Rand */
+    top: 100px;
+    right: 740px;
     color: white;
     background-color: #111;
     padding: 100px 200px;
+    margin: 0 auto;
     border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(128, 128, 128, 0.2);
 }
 
 .finish-title {
     margin-top: -3em;
 }
 
+/* Für größere Bildschirme, z.B. 4K */
+@media (min-width: 2560px) {
+    .finish {
+        padding: 100px 500px;
+    }
+}
+  
 /* ======== Finish Project End ======== */
 
 /* ========== Streak ========== */
 
 .streak {
     position: absolute;
-    top: 100px; /* Abstand vom oberen Rand */
-    right: 420px; /* Abstand vom rechten Rand */
+    top: 100px;
+    right: 420px;
     color: white;
     background-color: #111;
     padding: 20px 40px;
     border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(128, 128, 128, 0.2);
 }
 
 /* ======== Streak End ======== */
@@ -473,6 +483,7 @@ main {
 .footer-legal a:hover {
     color: #acb6e5;
 }
+
 .footer-legal {
     font-size: 1em;
     margin-top: 10px;
