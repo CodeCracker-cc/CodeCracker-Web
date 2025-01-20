@@ -384,6 +384,24 @@ body::-webkit-scrollbar-thumb:hover {
 
 /* ======== Account Links End ======== */
 
+/* ========== Finish Project ========== */
+
+.finish {
+    position: absolute;
+    top: 100px; /* Abstand vom oberen Rand */
+    right: 740px; /* Abstand vom rechten Rand */
+    color: white;
+    background-color: #111;
+    padding: 100px 200px;
+    border-radius: 20px;
+}
+
+.finish-title {
+    margin-top: -3em;
+}
+
+/* ======== Finish Project End ======== */
+
 /* ========== Streak ========== */
 
 .streak {
