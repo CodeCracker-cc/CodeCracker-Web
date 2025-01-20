@@ -31,5 +31,27 @@ services:
       - mongodb
       - auth-service
 
+  execution-service:
+    build: ./services/execution-service
+    ports:
+      - "3003:3000"
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/execution
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - mongodb
+
+  community-service:
+    build: ./services/community-service
+    ports:
+      - "3004:3000"
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/community
+      - AUTH_SERVICE_URL=http://auth-service:3000
+    depends_on:
+      - mongodb
+      - auth-service
+
 volumes:
   mongodb_data: 
