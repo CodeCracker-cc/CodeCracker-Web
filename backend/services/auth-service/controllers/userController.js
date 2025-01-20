@@ -142,11 +142,61 @@ class UserController {
   }
 
   async updateStats(req, res, next) {
-    // Implementierung für Benutzerstatistiken
+    try {
+      const { userId, challengePoints } = req.body;
+      
+      const user = await User.findById(userId);
+      if (!user) {
+        throw new AppError('Benutzer nicht gefunden', 404);
+      }
+
+      // Aktualisiere Statistiken
+      user.stats.totalPoints += challengePoints;
+      user.stats.solvedChallenges += 1;
+      
+      // Prüfe und aktualisiere Streak
+      const lastActivity = new Date(user.stats.lastActivity);
+      const today = new Date();
+      const diffDays = Math.floor((today - lastActivity) / (1000 * 60 * 60 * 24));
+      
+      if (diffDays === 1) {
+        user.stats.streak += 1;
+      } else if (diffDays > 1) {
+        user.stats.streak = 1;
+      }
+      
+      user.stats.lastActivity = today;
+
+      // Aktualisiere Rang basierend auf Punkten
+      await user.updateRank();
+      
+      await user.save();
+
+      res.status(200).json({
+        status: 'success',
+        data: { stats: user.stats }
+      });
+    } catch (err) {
+      next(err);
+    }
   }
 
   async getBadges(req, res, next) {
-    // Implementierung für Benutzer-Badges
+    try {
+      const user = await User.findById(req.params.userId)
+        .populate('badges');
+
+      if (!user) {
+        throw new AppError('Benutzer nicht gefunden', 404);
+      }
+
+      res.status(200).json({
+        status: 'success',
+        data: { badges: user.badges }
+      });
+    } catch (err) {
+      next(err);
+    }
   }
 }
 

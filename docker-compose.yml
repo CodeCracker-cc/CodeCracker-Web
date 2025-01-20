@@ -2,12 +2,57 @@ version: '3.8'
 services:
   api-gateway:
     build: ./services/api-gateway
-    # ...
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - auth-service
+      - challenge-service
+      - execution-service
 
   auth-service:
     build: ./services/auth-service
-    # ...
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/auth
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=90d
+    depends_on:
+      - mongodb
+      - redis
 
   challenge-service:
     build: ./services/challenge-service
-    # ... 
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/challenges
+      - AUTH_SERVICE_URL=http://auth-service:3000
+    depends_on:
+      - mongodb
+      - auth-service
+
+  execution-service:
+    build: ./services/execution-service
+    privileged: true
+    environment:
+      - MAX_EXECUTION_TIME=5000
+      - MAX_MEMORY=100M
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  mongodb:
+    image: mongo:latest
+    volumes:
+      - mongodb_data:/data/db
+    ports:
+      - "27017:27017"
+
+  redis:
+    image: redis:alpine
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+
+volumes:
+  mongodb_data:
+  redis_data: 

@@ -11,43 +11,14 @@ const logger = require('../../../utils/logger');
 class ChallengeController {
   async createChallenge(req, res, next) {
     try {
-      await validateRequest(challengeSchemas.createChallenge)(req, res, async () => {
-        const {
-          title,
-          description,
-          difficulty,
-          category,
-          points,
-          testCases,
-          solutionTemplate,
-          supportedLanguages
-        } = req.body;
+      const challenge = await Challenge.create({
+        ...req.body,
+        createdBy: req.user._id
+      });
 
-        const challenge = await Challenge.create({
-          title,
-          description,
-          difficulty,
-          category,
-          points,
-          solutionTemplate,
-          supportedLanguages,
-          createdBy: req.user._id
-        });
-
-        // Erstelle Testfälle separat
-        const testCasePromises = testCases.map(testCase => 
-          TestCase.create({
-            ...testCase,
-            challenge: challenge._id
-          })
-        );
-
-        await Promise.all(testCasePromises);
-
-        res.status(201).json({
-          status: 'success',
-          data: { challenge }
-        });
+      res.status(201).json({
+        status: 'success',
+        data: { challenge }
       });
     } catch (err) {
       next(err);
@@ -119,8 +90,15 @@ class ChallengeController {
 
   async getChallenges(req, res, next) {
     try {
-      const challenges = await Challenge.find()
-        .select('-testCases.expectedOutput');
+      const { difficulty, category, sort = '-createdAt' } = req.query;
+      const query = {};
+
+      if (difficulty) query.difficulty = difficulty;
+      if (category) query.category = category;
+
+      const challenges = await Challenge.find(query)
+        .sort(sort)
+        .populate('createdBy', 'username');
 
       res.status(200).json({
         status: 'success',
@@ -135,11 +113,7 @@ class ChallengeController {
     try {
       const challenge = await Challenge.findById(req.params.id)
         .populate('createdBy', 'username')
-        .populate({
-          path: 'testCases',
-          select: '-expectedOutput -timeLimit -memoryLimit',
-          match: { isHidden: false }
-        });
+        .populate('ratings.user', 'username');
 
       if (!challenge) {
         throw new AppError('Challenge nicht gefunden', 404);
