@@ -1,0 +1,240 @@
+/* ========== Body ========== */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #000000;
+    color: #f5f5f5;
+    font-family: 'Arial', sans-serif;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    left: -20%;
+    width: 140%;
+    height: 140%;
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0));
+    z-index: -1;
+}
+
+/* ======== Body End ======== */
+
+
+
+
+/* ========== Navbar ========== */
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(90deg, #242424, #0a0a0a);
+    color: white;
+    z-index: 1000;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px 40px;
+}
+
+.navbar-container {
+    max-width: 1700px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+.logo {
+    font-size: 1.8rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    color: #f9f9f9;
+}
+
+/* Search Bar */
+.search-bar-div {
+    margin-left: -5%;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    margin: 0 20px;
+}
+
+.search-bar input {
+    width: 100%;
+    max-width: 400px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px 0 0 5px;
+    font-size: 1rem;
+    background-color: #838383;
+}
+
+.search-bar button {
+    padding: 10px 10px;
+    background: #4b4b4b;
+    border: none;
+    border-radius: 0 5px 5px 0;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #333;
+}
+
+.search-bar i {
+    color: rgb(114, 114, 114);
+}
+
+.search-bar button:hover {
+    background: #3b3b3b;
+}
+
+/* Navigation Links */
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    margin: 0;
+}
+
+.nav-links li {
+    margin: 0 10px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 5px 10px;
+    transition: all 0.3s ease;
+    border-radius: 5px;
+}
+
+.nav-links a:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #f0c14b;
+    /* Highlight color */
+}
+
+/* Mobile Navbar Styling */
+@media (max-width: 768px) {
+    .search-bar {
+        display: none;
+        /* Hide search bar on smaller screens */
+    }
+
+    .nav-links {
+        display: none;
+    }
+
+    .navbar-container {
+        justify-content: space-between;
+    }
+
+    .hamburger {
+        display: block;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: white;
+    }
+
+    .nav-links.show {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        right: 0;
+        background: #283e51;
+        width: 100%;
+        text-align: center;
+        padding: 10px 0;
+    }
+
+    .nav-links a {
+        margin: 10px 0;
+    }
+}
+
+
+/* ======== Navbar End ======== */
+
+
+/* ========== Account ========== */
+
+.account {
+    position: fixed;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 400px;
+    background-color: #111;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    padding-top: 50px;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.4);
+    transition: all 0.3s ease-in-out;
+}
+
+.account-profile-picture {
+    margin-top: 5em;
+    margin-left: 25%;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: 2px solid #000000;
+    position: relative;
+    transition: transform 0.3s ease;
+}
+
+.account-profile-picture:hover {
+    transform: scale(1.1);
+    border-color: #2b2b2b;
+}
+
+
+.account-name,
+.account-plan {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.account-name {
+    font-size: 2em;
+}
+.account-plan {
+    font-size: 1em;
+    margin-top: -5%;
+}
+
+/* Cracker's Earnd*/
+
+.cracker-earnd {
+    background-color: #25252575;
+    border-radius: 20px;
+    margin: 40px 50px;
+}
+
+.cracker-earnd-title,
+.cracker-earnd-amount {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cracker-earnd-title{
+    font-size: 20px;
+}
+
+.cracker-earnd-amount {
+    font-size: 20px;
+}
+
+/* ======== Account End ======== */
