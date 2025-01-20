@@ -16,12 +16,15 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '16'
-          cache: 'npm'
+          
+      - name: Generate lockfiles
+        run: |
+          npm install --package-lock-only
+          cd frontend && npm install --package-lock-only
+          cd ../backend && npm install --package-lock-only
           
       - name: Install Dependencies
-        run: |
-          npm ci || npm install
-          npm run install:all
+        run: npm run install:all
           
       - name: Cache node modules
         uses: actions/cache@v3
