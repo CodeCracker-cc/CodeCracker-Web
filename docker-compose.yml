@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  api-gateway:
+    build: ./services/api-gateway
+    # ...
+
+  auth-service:
+    build: ./services/auth-service
+    # ...
+
+  challenge-service:
+    build: ./services/challenge-service
+    # ... 

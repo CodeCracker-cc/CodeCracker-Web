@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "winston": "^3.8.2",
+    "ioredis": "^5.3.2",
+    "express-rate-limit": "^6.7.0",
+    "helmet": "^7.0.0",
+    "xss-clean": "^0.1.4",
+    "hpp": "^0.2.3",
+    "consul": "^1.2.0",
+    "http-proxy-middleware": "^2.0.6",
+    "aws-sdk": "^2.1386.0",
+    "node-cron": "^3.0.2",
+    "joi": "^17.9.2",
+    "validator": "^13.9.0"
+  }
+} 
