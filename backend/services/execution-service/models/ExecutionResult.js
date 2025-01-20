@@ -2,25 +2,30 @@ const mongoose = require('mongoose');
 
 const executionResultSchema = new mongoose.Schema({
   submissionId: {
-    type: mongoose.Schema.ObjectId,
-    required: true
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'Submission'
   },
   language: {
     type: String,
-    enum: ['python', 'javascript', 'java', 'cpp'],
-    required: true
+    required: true,
+    enum: ['python', 'javascript', 'java', 'cpp']
   },
   status: {
     type: String,
-    enum: ['success', 'failed', 'error'],
-    required: true
+    required: true,
+    enum: ['pending', 'running', 'success', 'failed', 'error']
   },
   results: [{
-    testCase: Number,
+    testCase: {
+      input: String,
+      expectedOutput: String
+    },
     passed: Boolean,
     output: String,
     error: String,
-    executionTime: Number
+    executionTime: Number,
+    memoryUsage: Number
   }],
   totalExecutionTime: Number,
   createdAt: {

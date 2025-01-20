@@ -3,43 +3,68 @@ const mongoose = require('mongoose');
 const postSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true,
+    required: [true, 'Ein Titel ist erforderlich'],
     trim: true,
-    maxLength: 200
+    minlength: [5, 'Der Titel muss mindestens 5 Zeichen lang sein'],
+    maxlength: [100, 'Der Titel darf maximal 100 Zeichen lang sein']
   },
   content: {
     type: String,
-    required: true
+    required: [true, 'Der Inhalt ist erforderlich'],
+    minlength: [10, 'Der Inhalt muss mindestens 10 Zeichen lang sein'],
+    maxlength: [5000, 'Der Inhalt darf maximal 5000 Zeichen lang sein']
   },
   author: {
-    type: mongoose.Schema.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
   },
-  challenge: {
-    type: mongoose.Schema.ObjectId,
+  challengeId: {
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'Challenge'
   },
+  comments: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Comment'
+  }],
   tags: [{
     type: String,
-    enum: ['frage', 'diskussion', 'lösung', 'tipp', 'bug']
+    maxlength: 20
   }],
   likes: [{
-    type: mongoose.Schema.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }],
   views: {
     type: Number,
     default: 0
   },
-  isResolved: {
-    type: Boolean,
-    default: false
-  },
   createdAt: {
     type: Date,
     default: Date.now
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now
   }
+}, {
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true }
+});
+
+// Virtuals
+postSchema.virtual('likeCount').get(function() {
+  return this.likes.length;
+});
+
+postSchema.virtual('commentCount').get(function() {
+  return this.comments.length;
+});
+
+// Middleware
+postSchema.pre('save', function(next) {
+  this.updatedAt = Date.now();
+  next();
 });
 
 module.exports = mongoose.model('Post', postSchema); 

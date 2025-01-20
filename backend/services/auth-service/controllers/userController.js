@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const multer = require('multer');
 const sharp = require('sharp');
+const AppError = require('../../../utils/appError');
 
 const multerStorage = multer.memoryStorage();
 const multerFilter = (req, file, cb) => {
@@ -69,27 +70,18 @@ class UserController {
     }
   }
 
-  async getProfile(req, res) {
+  async getProfile(req, res, next) {
     try {
-      const user = await User.findById(req.params.userId)
-        .select('-password -twoFactorSecret');
-
-      if (!user) {
-        return res.status(404).json({
-          status: 'error',
-          message: 'Benutzer nicht gefunden'
-        });
-      }
+      const user = await User.findById(req.user.id)
+        .populate('badges')
+        .populate('completedChallenges');
 
       res.status(200).json({
         status: 'success',
         data: { user }
       });
     } catch (err) {
-      res.status(400).json({
-        status: 'error',
-        message: err.message
-      });
+      next(err);
     }
   }
 
@@ -147,6 +139,14 @@ class UserController {
         message: err.message
       });
     }
+  }
+
+  async updateStats(req, res, next) {
+    // Implementierung für Benutzerstatistiken
+  }
+
+  async getBadges(req, res, next) {
+    // Implementierung für Benutzer-Badges
   }
 }
 
