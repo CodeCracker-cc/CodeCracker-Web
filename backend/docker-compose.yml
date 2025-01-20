@@ -53,5 +53,38 @@ services:
       - mongodb
       - auth-service
 
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  monitoring:
+    build: ./services/monitoring-service
+    ports:
+      - "3005:3000"
+    depends_on:
+      - auth-service
+      - challenge-service
+      - execution-service
+      - community-service
+
+  gateway:
+    build: ./gateway
+    ports:
+      - "3000:3000"
+    environment:
+      - AUTH_SERVICE_URL=http://auth-service:3000
+      - CHALLENGE_SERVICE_URL=http://challenge-service:3000
+      - EXECUTION_SERVICE_URL=http://execution-service:3000
+      - COMMUNITY_SERVICE_URL=http://community-service:3000
+    depends_on:
+      - auth-service
+      - challenge-service
+      - execution-service
+      - community-service
+
 volumes:
-  mongodb_data: 
+  mongodb_data:
+  redis_data: 
