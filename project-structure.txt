@@ -1,0 +1,10 @@
+backend/
+├── services/
+│   ├── auth-service/         # Authentifizierung & Benutzerverwaltung
+│   ├── challenge-service/    # Challenge-Management
+│   ├── execution-service/    # Code-Ausführung
+│   ├── community-service/    # Forum & Community-Features
+│   └── admin-service/        # Admin-Dashboard
+├── shared/                   # Gemeinsam genutzte Utilities
+├── docker/                   # Docker-Konfigurationen
+└── api-gateway/             # API Gateway & Routing 
