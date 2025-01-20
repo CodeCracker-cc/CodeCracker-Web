@@ -24,7 +24,9 @@ jobs:
           cd ../backend && npm install --package-lock-only
           
       - name: Install Dependencies
-        run: npm run install:all
+        run: |
+          npm install -g react-scripts eslint
+          npm run install:all
           
       - name: Cache node modules
         uses: actions/cache@v3
@@ -44,8 +46,10 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
-          cache: 'npm'
-      
+          
+      - name: Install global dependencies
+        run: npm install -g eslint
+          
       - name: Restore cache
         uses: actions/cache@v3
         with:
@@ -54,6 +58,9 @@ jobs:
             ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
       
+      - name: Install dependencies
+        run: npm run install:all
+        
       - name: Run linting
         run: npm run lint
 

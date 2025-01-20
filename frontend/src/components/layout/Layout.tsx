@@ -1,8 +1,9 @@
 import React from 'react';
 import { Box, Container } from '@mui/material';
-import Navbar from './Navbar';
-import Sidebar from './Sidebar';
-import Toast from '../common/Toast';
+// Pfadkorrekturen für Navbar, Sidebar und Toast
+import Navbar from '../../components/layout/Navbar';
+import Sidebar from '../../components/layout/Sidebar';
+import Toast from '../../components/common/Toast';
 
 interface LayoutProps {
   children: React.ReactNode;
