@@ -141,4 +141,4 @@ Dieses Projekt ist unter der MIT-Lizenz lizenziert - siehe [LICENSE.md](LICENSE.
 
 ## 📞 Support
 
-Bei Fragen oder Problemen erstellen Sie bitte ein Issue oder kontaktieren Sie uns unter support@codemaster.com
+Bei Fragen oder Problemen erstellen Sie bitte ein Issue oder kontaktieren Sie uns unter support@codemaster.cc
