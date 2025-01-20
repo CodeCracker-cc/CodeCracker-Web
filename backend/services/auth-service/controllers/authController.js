@@ -1,78 +1,171 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+const AppError = require('../utils/appError');
+const config = require('../config');
 const { promisify } = require('util');
 const speakeasy = require('speakeasy');
 const QRCode = require('qrcode');
 const authSchemas = require('../schemas/authSchemas');
 const validateRequest = require('../../../middleware/validateRequest');
-const AppError = require('../../../utils/appError');
 
 class AuthController {
   async register(req, res, next) {
     try {
-      await validateRequest(authSchemas.register)(req, res, async () => {
-        const { email, password, username } = req.body;
+      const { email, password, username } = req.body;
 
-        // Prüfe ob Benutzer bereits existiert
-        const existingUser = await User.findOne({ 
-          $or: [{ email }, { username }] 
-        });
-
-        if (existingUser) {
-          throw new AppError('E-Mail oder Benutzername bereits vergeben', 400);
-        }
-
-        const user = await User.create({
-          email,
-          password,
-          username
-        });
-
-        const token = user.generateAuthToken();
-
-        res.status(201).json({
-          status: 'success',
-          data: {
-            user: {
-              id: user._id,
-              username: user.username,
-              email: user.email
-            },
-            token
-          }
-        });
+      // Prüfe ob Benutzer bereits existiert
+      const existingUser = await User.findOne({ 
+        $or: [{ email }, { username }] 
       });
-    } catch (err) {
-      next(err);
+
+      if (existingUser) {
+        return next(new AppError(
+          'Ein Benutzer mit dieser Email oder diesem Benutzernamen existiert bereits',
+          400
+        ));
+      }
+
+      // Erstelle neuen Benutzer
+      const user = await User.create({
+        email,
+        password,
+        username,
+        preferences: {
+          theme: 'light',
+          language: 'de',
+          notifications: {
+            email: true,
+            push: true
+          }
+        }
+      });
+
+      // Generiere Token
+      const token = jwt.sign(
+        { id: user._id },
+        config.jwt.secret,
+        { expiresIn: config.jwt.expiresIn }
+      );
+
+      // Entferne Password aus Response
+      user.password = undefined;
+
+      res.status(201).json({
+        status: 'success',
+        data: { user, token }
+      });
+    } catch (error) {
+      next(error);
     }
   }
 
   async login(req, res, next) {
     try {
-      await validateRequest(authSchemas.login)(req, res, async () => {
-        const { email, password } = req.body;
+      const { email, password } = req.body;
 
-        const user = await User.findOne({ email }).select('+password');
-        if (!user || !(await user.comparePassword(password))) {
-          throw new AppError('Ungültige E-Mail oder Passwort', 401);
-        }
+      // Prüfe ob Email und Passwort angegeben wurden
+      if (!email || !password) {
+        return next(new AppError('Bitte Email und Passwort angeben', 400));
+      }
 
-        const token = user.generateAuthToken();
+      // Hole Benutzer mit Passwort
+      const user = await User.findOne({ email }).select('+password');
 
-        res.status(200).json({
-          status: 'success',
-          data: {
-            user: {
-              id: user._id,
-              username: user.username,
-              email: user.email
-            },
-            token
-          }
-        });
+      if (!user || !(await user.correctPassword(password))) {
+        return next(new AppError('Falsche Email oder Passwort', 401));
+      }
+
+      // Generiere Token
+      const token = jwt.sign(
+        { id: user._id },
+        config.jwt.secret,
+        { expiresIn: config.jwt.expiresIn }
+      );
+
+      // Entferne Password aus Response
+      user.password = undefined;
+
+      res.json({
+        status: 'success',
+        data: { user, token }
       });
-    } catch (err) {
-      next(err);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getMe(req, res, next) {
+    try {
+      const user = await User.findById(req.user.id)
+        .populate('badges')
+        .select('-password');
+
+      res.json({
+        status: 'success',
+        data: { user }
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async updateMe(req, res, next) {
+    try {
+      // Verhindere Passwort Update über diese Route
+      if (req.body.password) {
+        return next(new AppError(
+          'Diese Route ist nicht für Passwort Updates. Bitte nutze /update-password',
+          400
+        ));
+      }
+
+      const user = await User.findByIdAndUpdate(
+        req.user.id,
+        {
+          username: req.body.username,
+          email: req.body.email,
+          preferences: req.body.preferences
+        },
+        {
+          new: true,
+          runValidators: true
+        }
+      );
+
+      res.json({
+        status: 'success',
+        data: { user }
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async updatePassword(req, res, next) {
+    try {
+      const user = await User.findById(req.user.id).select('+password');
+
+      if (!(await user.correctPassword(req.body.currentPassword))) {
+        return next(new AppError('Dein aktuelles Passwort ist falsch', 401));
+      }
+
+      user.password = req.body.newPassword;
+      await user.save();
+
+      // Generiere neuen Token
+      const token = jwt.sign(
+        { id: user._id },
+        config.jwt.secret,
+        { expiresIn: config.jwt.expiresIn }
+      );
+
+      res.json({
+        status: 'success',
+        data: { token }
+      });
+    } catch (error) {
+      next(error);
     }
   }
 

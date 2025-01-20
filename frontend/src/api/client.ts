@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { InternalAxiosRequestConfig } from 'axios';
 import { store } from '../store';
 import { logout } from '../store/slices/authSlice';
 
@@ -7,9 +7,9 @@ const api = axios.create({
 });
 
 // Request Interceptor
-api.interceptors.request.use((config) => {
+api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const token = store.getState().auth.token;
-  if (token) {
+  if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;

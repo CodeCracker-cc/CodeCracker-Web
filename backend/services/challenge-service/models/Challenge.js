@@ -1,6 +1,23 @@
 const mongoose = require('mongoose');
 const config = require('../../../config/serviceConfig');
 
+const testCaseSchema = new mongoose.Schema({
+  input: { type: String, required: true },
+  expectedOutput: { type: String, required: true },
+  isHidden: { type: Boolean, default: false },
+  description: String,
+  timeLimit: { type: Number, default: 2000 }, // in ms
+  memoryLimit: { type: Number, default: 128 }, // in MB
+});
+
+const ratingSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, required: true },
+  rating: { type: Number, required: true, min: 1, max: 5 },
+  review: String,
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: Date
+});
+
 const challengeSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -31,14 +48,7 @@ const challengeSchema = new mongoose.Schema({
     min: [1, 'Mindestens 1 Punkt muss vergeben werden'],
     max: [100, 'Maximal 100 Punkte können vergeben werden']
   },
-  testCases: [{
-    input: String,
-    expectedOutput: String,
-    isHidden: {
-      type: Boolean,
-      default: false
-    }
-  }],
+  testCases: [testCaseSchema],
   solutionTemplate: {
     type: String,
     required: [true, 'Eine Lösungsvorlage ist erforderlich']
@@ -62,18 +72,7 @@ const challengeSchema = new mongoose.Schema({
       default: Date.now
     }
   }],
-  ratings: [{
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
-    },
-    rating: {
-      type: Number,
-      min: 1,
-      max: 5
-    },
-    review: String
-  }],
+  ratings: [ratingSchema],
   solvedBy: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
@@ -110,7 +109,7 @@ challengeSchema.pre('save', function(next) {
 });
 
 // Indizes für bessere Suchperformance
-challengeSchema.index({ category: 1, difficulty: 1 });
+challengeSchema.index({ difficulty: 1, category: 1 });
 challengeSchema.index({ title: 'text', description: 'text' });
 
 module.exports = mongoose.model('Challenge', challengeSchema); 

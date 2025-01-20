@@ -4,13 +4,14 @@ import { submitSolution } from '../../store/slices/challengeSlice';
 import { Editor } from '@monaco-editor/react';
 import { Button, Select, MenuItem, Paper, Box } from '@mui/material';
 import { Challenge } from '../../types';
+import { AppDispatch } from '../../store';
 
 interface ChallengeEditorProps {
   challenge: Challenge;
 }
 
 const ChallengeEditor: React.FC<ChallengeEditorProps> = ({ challenge }) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const [code, setCode] = useState(challenge.solutionTemplate);
   const [language, setLanguage] = useState(challenge.supportedLanguages[0]);
   const [submitting, setSubmitting] = useState(false);

@@ -1,89 +1,69 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { TextField, Button, Alert } from '@mui/material';
+import { TextField, Button, Box, Typography } from '@mui/material';
+import { useDispatch } from 'react-redux';
+import { login } from '../../store/slices/authSlice';
+import { LoginCredentials } from '../../store/types';
+import { AppDispatch } from '../../store';
 
 interface LoginProps {
-  onSuccess: (token: string) => void;
-}
-
-interface LoginFormData {
-  email: string;
-  password: string;
+  onSuccess?: () => void;
 }
 
 const Login: React.FC<LoginProps> = ({ onSuccess }) => {
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>();
-  const [error, setError] = useState<string>('');
-  const [loading, setLoading] = useState(false);
+  const { register, handleSubmit, formState: { errors } } = useForm<LoginCredentials>();
+  const [error, setError] = useState<string | null>(null);
+  const dispatch = useDispatch<AppDispatch>();
 
-  const onSubmit = async (data: LoginFormData) => {
+  const onSubmit = async (data: LoginCredentials) => {
     try {
-      setLoading(true);
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-
-      const result = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(result.message || 'Login fehlgeschlagen');
-      }
-
-      onSuccess(result.data.token);
+      await dispatch(login(data)).unwrap();
+      onSuccess?.();
     } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Ein unerwarteter Fehler ist aufgetreten');
+      }
     }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      {error && <Alert severity="error">{error}</Alert>}
+    <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ mt: 1 }}>
+      {error && (
+        <Typography color="error" sx={{ mb: 2 }}>
+          {error}
+        </Typography>
+      )}
       
       <TextField
-        {...register('email', { 
-          required: 'Email ist erforderlich',
-          pattern: {
-            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-            message: 'Ungültige Email Adresse'
-          }
-        })}
-        label="Email"
-        fullWidth
+        {...register('email', { required: 'Email ist erforderlich' })}
         margin="normal"
+        fullWidth
+        label="Email Adresse"
         error={!!errors.email}
         helperText={errors.email?.message}
       />
-
+      
       <TextField
-        {...register('password', { 
-          required: 'Passwort ist erforderlich',
-          minLength: {
-            value: 8,
-            message: 'Passwort muss mindestens 8 Zeichen lang sein'
-          }
-        })}
+        {...register('password', { required: 'Passwort ist erforderlich' })}
+        margin="normal"
+        fullWidth
         label="Passwort"
         type="password"
-        fullWidth
-        margin="normal"
         error={!!errors.password}
         helperText={errors.password?.message}
       />
-
-      <Button 
+      
+      <Button
         type="submit"
-        variant="contained"
-        color="primary"
         fullWidth
-        disabled={loading}
+        variant="contained"
+        sx={{ mt: 3, mb: 2 }}
       >
-        {loading ? 'Lädt...' : 'Einloggen'}
+        Einloggen
       </Button>
-    </form>
+    </Box>
   );
 };
 

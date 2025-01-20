@@ -7,21 +7,27 @@ const validateRequest = require('../../../middleware/validateRequest');
 const AppError = require('../../../utils/appError');
 const config = require('../../../config');
 const logger = require('../../../utils/logger');
+const { validateChallenge } = require('../utils/validation');
 
 class ChallengeController {
   async createChallenge(req, res, next) {
     try {
+      const validationError = validateChallenge(req.body);
+      if (validationError) {
+        return next(new AppError(validationError, 400));
+      }
+
       const challenge = await Challenge.create({
         ...req.body,
-        createdBy: req.user._id
+        createdBy: req.user.id
       });
 
       res.status(201).json({
         status: 'success',
         data: { challenge }
       });
-    } catch (err) {
-      next(err);
+    } catch (error) {
+      next(error);
     }
   }
 
@@ -90,7 +96,7 @@ class ChallengeController {
 
   async getChallenges(req, res, next) {
     try {
-      const { difficulty, category, sort = '-createdAt' } = req.query;
+      const { difficulty, category, limit = 10, sort = '-createdAt' } = req.query;
       const query = {};
 
       if (difficulty) query.difficulty = difficulty;
@@ -98,33 +104,41 @@ class ChallengeController {
 
       const challenges = await Challenge.find(query)
         .sort(sort)
-        .populate('createdBy', 'username');
+        .limit(Number(limit))
+        .select('-testCases.expectedOutput');
 
-      res.status(200).json({
+      res.json({
         status: 'success',
+        results: challenges.length,
         data: { challenges }
       });
-    } catch (err) {
-      next(err);
+    } catch (error) {
+      next(error);
     }
   }
 
   async getChallenge(req, res, next) {
     try {
-      const challenge = await Challenge.findById(req.params.id)
-        .populate('createdBy', 'username')
-        .populate('ratings.user', 'username');
-
+      const challenge = await Challenge.findById(req.params.id);
+      
       if (!challenge) {
-        throw new AppError('Challenge nicht gefunden', 404);
+        return next(new AppError('Challenge nicht gefunden', 404));
       }
 
-      res.status(200).json({
+      // Verstecke die Lösungen für nicht-admin User
+      if (req.user.role !== 'admin') {
+        challenge.testCases = challenge.testCases.map(test => ({
+          ...test.toObject(),
+          expectedOutput: test.isHidden ? undefined : test.expectedOutput
+        }));
+      }
+
+      res.json({
         status: 'success',
         data: { challenge }
       });
-    } catch (err) {
-      next(err);
+    } catch (error) {
+      next(error);
     }
   }
 
@@ -272,6 +286,42 @@ class ChallengeController {
       }
     } catch (error) {
       logger.error('Fehler beim Badge-Check:', error);
+    }
+  }
+
+  async rateChallenge(req, res, next) {
+    try {
+      const { rating, review } = req.body;
+      const challenge = await Challenge.findById(req.params.id);
+
+      if (!challenge) {
+        return next(new AppError('Challenge nicht gefunden', 404));
+      }
+
+      const existingRating = challenge.ratings.find(
+        r => r.userId.toString() === req.user.id
+      );
+
+      if (existingRating) {
+        existingRating.rating = rating;
+        existingRating.review = review;
+        existingRating.updatedAt = new Date();
+      } else {
+        challenge.ratings.push({
+          userId: req.user.id,
+          rating,
+          review
+        });
+      }
+
+      await challenge.save();
+
+      res.json({
+        status: 'success',
+        data: { challenge }
+      });
+    } catch (error) {
+      next(error);
     }
   }
 }

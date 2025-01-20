@@ -1,6 +1,5 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
-import { User } from '../../types';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { User, LoginCredentials, LoginResponse } from '../types';
 
 interface AuthState {
   user: User | null;
@@ -16,9 +15,9 @@ const initialState: AuthState = {
   error: null
 };
 
-export const login = createAsyncThunk(
+export const login = createAsyncThunk<LoginResponse, LoginCredentials>(
   'auth/login',
-  async (credentials: { email: string; password: string }) => {
+  async (credentials) => {
     const response = await fetch('/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
