@@ -7,6 +7,9 @@ services:
     environment:
       - NODE_ENV=development
       - JWT_SECRET=your_jwt_secret_key
+      - AUTH_SERVICE_URL=http://auth-service:3000
+      - CHALLENGE_SERVICE_URL=http://challenge-service:3000
+      - EXECUTION_SERVICE_URL=http://execution-service:3000
     depends_on:
       - auth-service
       - challenge-service
@@ -41,7 +44,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
   mongodb:
-    image: mongo:latest
+    image: mongo:4.4
     volumes:
       - mongodb_data:/data/db
     ports:
