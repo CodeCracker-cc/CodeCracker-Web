@@ -12,6 +12,8 @@ services:
       - EXECUTION_SERVICE_URL=http://execution-service:3000
     depends_on:
       - auth-service
+      - challenge-service
+      - execution-service
     networks:
       - app-network
 
@@ -28,6 +30,7 @@ services:
       - mongodb
     networks:
       - app-network
+    restart: always
 
   challenge-service:
     build: ./backend/services/challenge-service
@@ -37,6 +40,8 @@ services:
     depends_on:
       - mongodb
       - auth-service
+    networks:
+      - app-network
 
   execution-service:
     build: ./backend/services/execution-service
@@ -46,6 +51,8 @@ services:
       - MAX_MEMORY=100M
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - app-network
 
   mongodb:
     image: mongo:4.4
@@ -62,6 +69,8 @@ services:
       - redis_data:/data
     ports:
       - "6379:6379"
+    networks:
+      - app-network
 
 networks:
   app-network:
