@@ -26,10 +26,13 @@ class AuthController {
         ));
       }
 
+      // Hash das Passwort
+      const hashedPassword = await bcrypt.hash(password, 12);
+
       // Erstelle neuen Benutzer
       const user = await User.create({
         email,
-        password,
+        password: hashedPassword,
         username,
         preferences: {
           theme: 'light',
@@ -44,8 +47,8 @@ class AuthController {
       // Generiere Token
       const token = jwt.sign(
         { id: user._id },
-        config.jwt.secret,
-        { expiresIn: config.jwt.expiresIn }
+        process.env.JWT_SECRET,
+        { expiresIn: process.env.JWT_EXPIRES_IN }
       );
 
       // Entferne Password aus Response
@@ -60,51 +63,38 @@ class AuthController {
     }
   }
 
-  async login(req, res) {
+  async login(req, res, next) {
     try {
       const { email, password } = req.body;
 
-      // Benutzer finden
-      const user = await User.findOne({ email });
-      if (!user) {
-        return res.status(401).json({
-          status: 'error',
-          message: 'Ungültige Email oder Passwort'
-        });
+      // Prüfe ob Email und Passwort angegeben wurden
+      if (!email || !password) {
+        return next(new AppError('Bitte Email und Passwort angeben', 400));
       }
 
-      // Passwort überprüfen
-      const isPasswordValid = await bcrypt.compare(password, user.password);
-      if (!isPasswordValid) {
-        return res.status(401).json({
-          status: 'error',
-          message: 'Ungültige Email oder Passwort'
-        });
+      // Hole Benutzer mit Passwort
+      const user = await User.findOne({ email }).select('+password');
+
+      if (!user || !(await bcrypt.compare(password, user.password))) {
+        return next(new AppError('Falsche Email oder Passwort', 401));
       }
 
-      // Token generieren
+      // Generiere Token
       const token = jwt.sign(
         { id: user._id },
         process.env.JWT_SECRET,
         { expiresIn: process.env.JWT_EXPIRES_IN }
       );
 
-      // Passwort aus Response entfernen
+      // Entferne Password aus Response
       user.password = undefined;
 
-      res.status(200).json({
+      res.json({
         status: 'success',
-        data: {
-          user,
-          token
-        }
+        data: { user, token }
       });
-
-    } catch (err) {
-      res.status(500).json({
-        status: 'error',
-        message: 'Login fehlgeschlagen'
-      });
+    } catch (error) {
+      next(error);
     }
   }
 
