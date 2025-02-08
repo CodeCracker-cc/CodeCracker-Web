@@ -93,7 +93,7 @@ main {
     border: none;
     border-radius: 5px 0 0 5px;
     font-size: 1rem;
-    background-color: #838383;
+    background-color: #5a5a5a;
 }
 
 .search-bar button {
@@ -103,11 +103,11 @@ main {
     border-radius: 0 5px 5px 0;
     cursor: pointer;
     font-size: 1rem;
-    color: #333;
+    color: #ffffff;
 }
 
 .search-bar i {
-    color: rgb(114, 114, 114);
+    color: rgb(255, 255, 255);
 }
 
 .search-bar button:hover {
@@ -436,7 +436,7 @@ main {
 /* Footer */
 .footer {
     background-color: #111;
-    color: #fff;
+    color: #666565;
     padding: 20px;
     text-align: center;
     font-family: Arial, sans-serif;
@@ -447,7 +447,7 @@ main {
 .footer-title {
     font-size: 1.8em;
     margin-bottom: 10px;
-    color: #74ebd5;
+    color: #666565;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
@@ -458,7 +458,7 @@ main {
 }
 
 .footer-social-media a {
-    color: #74ebd5;
+    color: #666565;
     text-decoration: none;
     margin: 0 5px;
     transition: color 0.3s ease-in-out;
@@ -474,7 +474,7 @@ main {
 }
 
 .footer-legal a {
-    color: #74ebd5;
+    color: #666565;
     text-decoration: none;
     margin: 0 5px;
     transition: color 0.3s ease-in-out;
