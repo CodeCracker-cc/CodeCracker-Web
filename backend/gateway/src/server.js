@@ -31,7 +31,8 @@ app.use('/api/auth', createProxyMiddleware({
             status: 'error',
             message: 'Service nicht verfügbar'
         });
-    }
+    },
+    logLevel: 'debug'  // Füge Debug-Logging hinzu
 }));
 
 // Proxy Konfiguration für andere Services...

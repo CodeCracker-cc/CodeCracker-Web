@@ -12,8 +12,8 @@ services:
       - EXECUTION_SERVICE_URL=http://execution-service:3000
     depends_on:
       - auth-service
-      - challenge-service
-      - execution-service
+    networks:
+      - app-network
 
   auth-service:
     build: ./backend/services/auth-service
@@ -23,9 +23,11 @@ services:
       - MONGODB_URI=mongodb://mongodb:27017/auth
       - JWT_SECRET=your_jwt_secret_key
       - JWT_EXPIRES_IN=90d
+      - PORT=3000
     depends_on:
       - mongodb
-      - redis
+    networks:
+      - app-network
 
   challenge-service:
     build: ./backend/services/challenge-service
@@ -51,6 +53,8 @@ services:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
+    networks:
+      - app-network
 
   redis:
     image: redis:alpine
@@ -58,6 +62,10 @@ services:
       - redis_data:/data
     ports:
       - "6379:6379"
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
   mongodb_data:
