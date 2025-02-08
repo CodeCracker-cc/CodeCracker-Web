@@ -1,0 +1,30 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeCracker - Registrieren</title>
+    <link rel="stylesheet" href="css/register-style.css">
+</head>
+<body>
+    <section class="welcome-section">
+        <h1 class="welcome-title">Welcome on CodeCracker</h1>
+        <h1 class="welcome-subtitle">Create your own Account!</h1>
+        <h1 class="welcome-subtitle">Und Lerne mehr über IT als Zuvor</h1>
+    </section>
+
+    <section class="register-section">
+        <div class="register">
+            <h1 class="register-title">CodeCracker - Registrieren</h1>
+
+            <form action="backend/register.php" method="POST">
+                <input type="text" name="username" placeholder="Benutzername" required>
+                <input type="email" name="email" placeholder="E-Mail-Adresse" required>
+                <input type="password" name="password" placeholder="Passwort" required>
+                <input type="password" name="confirm_password" placeholder="Passwort bestätigen" required>
+                <button type="submit">Registrieren</button>
+            </form>
+            <a href="backend/login.php" class="register-link">Bereits einen Account? Anmelden</a>
+        </div>
+    </section>
+</body>
+</html>
