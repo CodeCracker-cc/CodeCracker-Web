@@ -18,6 +18,16 @@
     "test:backend": "cd backend && npm test",
     "lint": "npm run lint:frontend && npm run lint:backend",
     "lint:frontend": "cd frontend && npm run lint",
-    "lint:backend": "cd backend && eslint ."
+    "lint:backend": "cd backend && eslint .",
+    "start:backend": "docker-compose up",
+    "start:backend:dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up",
+    "start:backend:services": "concurrently \"npm run dev:auth\" \"npm run dev:challenge\" \"npm run dev:execution\" \"npm run dev:gateway\"",
+    "dev:auth": "cd backend/services/auth-service && npm run dev",
+    "dev:challenge": "cd backend/services/challenge-service && npm run dev",
+    "dev:execution": "cd backend/services/execution-service && npm run dev",
+    "dev:gateway": "cd backend/gateway && npm run dev"
+  },
+  "devDependencies": {
+    "concurrently": "^8.0.1"
   }
 } 
