@@ -5,7 +5,7 @@ const app = express();
 
 // CORS für das Frontend erlauben
 app.use(cors({
-    origin: 'http://192.168.178.200', // Die IP-Adresse deines Frontends
+    origin: 'http://192.168.178.200', // Die IP-Adresse des Frontends
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
