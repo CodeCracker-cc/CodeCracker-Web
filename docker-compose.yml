@@ -1,28 +1,29 @@
 version: '3.8'
 services:
   api-gateway:
-    build: ./services/api-gateway
+    build: ./backend/gateway
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=development
+      - JWT_SECRET=your_jwt_secret_key
     depends_on:
       - auth-service
       - challenge-service
       - execution-service
 
   auth-service:
-    build: ./services/auth-service
+    build: ./backend/services/auth-service
     environment:
       - MONGODB_URI=mongodb://mongodb:27017/auth
-      - JWT_SECRET=${JWT_SECRET}
+      - JWT_SECRET=your_jwt_secret_key
       - JWT_EXPIRES_IN=90d
     depends_on:
       - mongodb
       - redis
 
   challenge-service:
-    build: ./services/challenge-service
+    build: ./backend/services/challenge-service
     environment:
       - MONGODB_URI=mongodb://mongodb:27017/challenges
       - AUTH_SERVICE_URL=http://auth-service:3000
@@ -31,7 +32,7 @@ services:
       - auth-service
 
   execution-service:
-    build: ./services/execution-service
+    build: ./backend/services/execution-service
     privileged: true
     environment:
       - MAX_EXECUTION_TIME=5000
