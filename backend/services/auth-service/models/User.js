@@ -4,18 +4,19 @@ const bcrypt = require('bcryptjs');
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
-    required: true,
+    required: [true, 'Email ist erforderlich'],
     unique: true,
     lowercase: true
   },
   password: {
     type: String,
-    required: true,
-    minlength: 8
+    required: [true, 'Passwort ist erforderlich'],
+    minlength: 8,
+    select: false
   },
   username: {
     type: String,
-    required: true,
+    required: [true, 'Benutzername ist erforderlich'],
     unique: true
   },
   role: {
@@ -96,6 +97,8 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   }
+}, {
+  timestamps: true
 });
 
 userSchema.pre('save', async function(next) {
@@ -128,4 +131,6 @@ userSchema.methods.addBadge = async function(badgeData) {
   await this.save();
 };
 
-module.exports = mongoose.model('User', userSchema); 
+const User = mongoose.model('User', userSchema);
+
+module.exports = User; 
