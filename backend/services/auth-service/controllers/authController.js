@@ -60,38 +60,51 @@ class AuthController {
     }
   }
 
-  async login(req, res, next) {
+  async login(req, res) {
     try {
       const { email, password } = req.body;
 
-      // Prüfe ob Email und Passwort angegeben wurden
-      if (!email || !password) {
-        return next(new AppError('Bitte Email und Passwort angeben', 400));
+      // Benutzer finden
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res.status(401).json({
+          status: 'error',
+          message: 'Ungültige Email oder Passwort'
+        });
       }
 
-      // Hole Benutzer mit Passwort
-      const user = await User.findOne({ email }).select('+password');
-
-      if (!user || !(await user.correctPassword(password))) {
-        return next(new AppError('Falsche Email oder Passwort', 401));
+      // Passwort überprüfen
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        return res.status(401).json({
+          status: 'error',
+          message: 'Ungültige Email oder Passwort'
+        });
       }
 
-      // Generiere Token
+      // Token generieren
       const token = jwt.sign(
         { id: user._id },
-        config.jwt.secret,
-        { expiresIn: config.jwt.expiresIn }
+        process.env.JWT_SECRET,
+        { expiresIn: process.env.JWT_EXPIRES_IN }
       );
 
-      // Entferne Password aus Response
+      // Passwort aus Response entfernen
       user.password = undefined;
 
-      res.json({
+      res.status(200).json({
         status: 'success',
-        data: { user, token }
+        data: {
+          user,
+          token
+        }
       });
-    } catch (error) {
-      next(error);
+
+    } catch (err) {
+      res.status(500).json({
+        status: 'error',
+        message: 'Login fehlgeschlagen'
+      });
     }
   }
 
