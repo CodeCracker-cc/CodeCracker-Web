@@ -4,10 +4,10 @@ const bcrypt = require('bcryptjs');
 const AppError = require('../utils/appError');
 const config = require('../config');
 const { promisify } = require('util');
-const speakeasy = require('speakeasy');
 const QRCode = require('qrcode');
 const authSchemas = require('../schemas/authSchemas');
 const validateRequest = require('../../../middleware/validateRequest');
+const speakeasy = require('speakeasy');
 
 class AuthController {
   async register(req, res, next) {
@@ -77,6 +77,19 @@ class AuthController {
 
       if (!user || !(await bcrypt.compare(password, user.password))) {
         return next(new AppError('Falsche Email oder Passwort', 401));
+      }
+
+      // Prüfe ob 2FA aktiviert ist
+      if (user.twoFactorEnabled) {
+        return res.json({
+          status: 'success',
+          requires2FA: true,
+          tempToken: jwt.sign(
+            { id: user._id, temp: true },
+            process.env.JWT_SECRET,
+            { expiresIn: '5m' }
+          )
+        });
       }
 
       // Generiere Token
@@ -234,6 +247,102 @@ class AuthController {
       });
     } catch (err) {
       next(err);
+    }
+  }
+
+  async enable2FA(req, res, next) {
+    try {
+      const user = await User.findById(req.user.id);
+
+      // Generiere 2FA Secret
+      const secret = speakeasy.generateSecret({
+        name: `CodeCracker:${user.email}`
+      });
+
+      // Speichere Secret temporär
+      user.twoFactorSecret = secret.base32;
+      await user.save();
+
+      // Generiere QR Code
+      const qrCode = await QRCode.toDataURL(secret.otpauth_url);
+
+      res.json({
+        status: 'success',
+        data: {
+          qrCode,
+          secret: secret.base32
+        }
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async verify2FA(req, res, next) {
+    try {
+      const { token } = req.body;
+      const user = await User.findById(req.user.id);
+
+      const verified = speakeasy.totp.verify({
+        secret: user.twoFactorSecret,
+        encoding: 'base32',
+        token
+      });
+
+      if (!verified) {
+        return next(new AppError('Ungültiger 2FA Code', 401));
+      }
+
+      user.twoFactorEnabled = true;
+      await user.save();
+
+      res.json({
+        status: 'success',
+        message: '2FA erfolgreich aktiviert'
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async validate2FA(req, res, next) {
+    try {
+      const { token } = req.body;
+      const user = await User.findById(req.user.id);
+
+      const verified = speakeasy.totp.verify({
+        secret: user.twoFactorSecret,
+        encoding: 'base32',
+        token
+      });
+
+      if (!verified) {
+        return next(new AppError('Ungültiger 2FA Code', 401));
+      }
+
+      res.json({
+        status: 'success',
+        message: '2FA Code gültig'
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async disable2FA(req, res, next) {
+    try {
+      const user = await User.findById(req.user.id);
+      
+      user.twoFactorEnabled = false;
+      user.twoFactorSecret = undefined;
+      await user.save();
+
+      res.json({
+        status: 'success',
+        message: '2FA deaktiviert'
+      });
+    } catch (error) {
+      next(error);
     }
   }
 }

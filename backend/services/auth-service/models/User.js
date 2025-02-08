@@ -88,7 +88,10 @@ const userSchema = new mongoose.Schema({
       }
     }
   },
-  twoFactorSecret: String,
+  twoFactorSecret: {
+    type: String,
+    select: false  // Nicht in normalen Queries zurückgeben
+  },
   twoFactorEnabled: {
     type: Boolean,
     default: false
