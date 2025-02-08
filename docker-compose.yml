@@ -17,6 +17,8 @@ services:
 
   auth-service:
     build: ./backend/services/auth-service
+    ports:
+      - "3001:3000"
     environment:
       - MONGODB_URI=mongodb://mongodb:27017/auth
       - JWT_SECRET=your_jwt_secret_key
@@ -45,10 +47,10 @@ services:
 
   mongodb:
     image: mongo:4.4
-    volumes:
-      - mongodb_data:/data/db
     ports:
       - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
 
   redis:
     image: redis:alpine
