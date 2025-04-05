@@ -1,8 +1,17 @@
 const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const consul = require('consul')();
+const cors = require('cors');
 
 const app = express();
+
+// CORS-Konfiguration
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? process.env.FRONTEND_URL || 'https://codecracker.com' 
+    : ['http://localhost:3000', 'http://localhost:8080'],
+  credentials: true
+}));
 
 // Service discovery
 const services = {
@@ -28,4 +37,4 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'healthy' });
 });
 
-module.exports = app; 
+module.exports = app;

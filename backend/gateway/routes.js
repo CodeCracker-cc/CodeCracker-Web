@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const proxy = require('express-http-proxy');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 const serviceAuth = require('../middleware/serviceAuth');
 const rateLimit = require('express-rate-limit');
 
@@ -11,24 +11,41 @@ const apiLimiter = rateLimit({
 });
 
 // Auth Service Routes
-router.use('/api/auth', apiLimiter, proxy('http://auth-service:3000', {
-  proxyReqPathResolver: (req) => `/api/auth${req.url}`
+router.use('/api/auth', apiLimiter, createProxyMiddleware({
+  target: 'http://auth-service:3000',
+  changeOrigin: true,
+  pathRewrite: {
+    '^/api/auth': '/api/auth'
+  }
 }));
 
 // Challenge Service Routes
-router.use('/api/challenges', serviceAuth.authenticateService, proxy('http://challenge-service:3000', {
-  proxyReqPathResolver: (req) => `/api/challenges${req.url}`
+router.use('/api/challenges', serviceAuth.authenticateService, createProxyMiddleware({
+  target: 'http://challenge-service:3000',
+  changeOrigin: true,
+  pathRewrite: {
+    '^/api/challenges': '/api/challenges'
+  }
 }));
 
 // Execution Service Routes
-router.use('/api/execute', serviceAuth.authenticateService, proxy('http://execution-service:3000', {
-  proxyReqPathResolver: (req) => `/api/execute${req.url}`,
+router.use('/api/execute', serviceAuth.authenticateService, createProxyMiddleware({
+  target: 'http://execution-service:3000',
+  changeOrigin: true,
+  pathRewrite: {
+    '^/api/execute': '/api/execute'
+  },
+  proxyTimeout: 120000, // 2 Minuten Timeout für Code-Ausführung
   limit: '10mb'
 }));
 
 // Community Service Routes
-router.use('/api/community', serviceAuth.authenticateService, proxy('http://community-service:3000', {
-  proxyReqPathResolver: (req) => `/api/community${req.url}`
+router.use('/api/community', serviceAuth.authenticateService, createProxyMiddleware({
+  target: 'http://community-service:3000',
+  changeOrigin: true,
+  pathRewrite: {
+    '^/api/community': '/api/community'
+  }
 }));
 
-module.exports = router; 
+module.exports = router;
