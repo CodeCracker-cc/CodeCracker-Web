@@ -2,8 +2,16 @@ const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const consul = require('consul')();
 const cors = require('cors');
+const helmet = require('helmet');
+const morgan = require('morgan');
 
 const app = express();
+
+// Logger für API-Anfragen
+app.use(morgan('dev'));
+
+// Sicherheitsheader
+app.use(helmet());
 
 // CORS-Konfiguration
 app.use(cors({
@@ -28,6 +36,14 @@ Object.entries(services).forEach(([name, service]) => {
     changeOrigin: true,
     pathRewrite: {
       [`^/api/${name}`]: ''
+    },
+    onError: (err, req, res) => {
+      console.error(`Proxy error für ${name}-Service:`, err);
+      res.status(500).json({ 
+        error: 'Service temporär nicht verfügbar',
+        service: name,
+        message: process.env.NODE_ENV === 'development' ? err.message : undefined
+      });
     }
   }));
 });
@@ -35,6 +51,20 @@ Object.entries(services).forEach(([name, service]) => {
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'healthy' });
+});
+
+// 404 Handler
+app.use((req, res) => {
+  res.status(404).json({ error: 'Route nicht gefunden' });
+});
+
+// Globaler Error Handler
+app.use((err, req, res, next) => {
+  console.error('Unbehandelte Ausnahme:', err);
+  res.status(500).json({ 
+    error: 'Interner Serverfehler',
+    message: process.env.NODE_ENV === 'development' ? err.message : undefined
+  });
 });
 
 module.exports = app;

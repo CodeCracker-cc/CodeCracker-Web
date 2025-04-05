@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build: 
+      context: ./backend/gateway
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./backend/gateway:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - DEBUG=gateway:*
+    command: npm run dev
+
+  auth-service:
+    build:
+      context: ./backend/services/auth-service
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./backend/services/auth-service:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - DEBUG=auth:*
+    command: npm run dev
+
+  challenge-service:
+    build:
+      context: ./backend/services/challenge-service
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./backend/services/challenge-service:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - DEBUG=challenge:*
+    command: npm run dev
+
+  execution-service:
+    build:
+      context: ./backend/services/execution-service
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./backend/services/execution-service:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - DEBUG=execution:*
+    command: npm run dev
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=development
+    command: npm run dev
+    depends_on:
+      - api-gateway
