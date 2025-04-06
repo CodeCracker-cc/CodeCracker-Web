@@ -16,11 +16,12 @@
     "speakeasy": "^2.0.0",
     "qrcode": "^1.5.3",
     "joi": "^17.9.2",
-    "validator": "^13.9.0"
+    "validator": "^13.9.0",
+    "axios": "^1.4.0"
   },
   "devDependencies": {
     "jest": "^29.5.0",
     "nodemon": "^2.0.22",
     "supertest": "^6.3.3"
   }
-} 
+}
