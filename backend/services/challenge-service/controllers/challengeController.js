@@ -1,6 +1,7 @@
 const Challenge = require('../models/Challenge');
 const Submission = require('../models/Submission');
 const TestCase = require('../models/TestCase');
+const Task = require('../models/Task');
 const axios = require('axios');
 const challengeSchemas = require('../schemas/challengeSchemas');
 const validateRequest = require('../../../middleware/validateRequest');
@@ -8,6 +9,7 @@ const AppError = require('../../../utils/appError');
 const config = require('../../../config');
 const logger = require('../../../utils/logger');
 const { validateChallenge } = require('../utils/validation');
+const dashboardController = require('./dashboardController');
 
 class ChallengeController {
   async createChallenge(req, res, next) {
@@ -62,17 +64,96 @@ class ChallengeController {
 
         // Wenn alle Tests bestanden wurden
         if (executionResult.data.success) {
-          // Aktualisiere Benutzerstatistiken
-          await axios.post(
-            `${process.env.AUTH_SERVICE_URL}/api/users/updateStats`,
-            {
-              userId: req.user._id,
-              challengePoints: challenge.points
-            }
-          );
+          // Speichere die erfolgreiche Lösung
+          await Submission.create({
+            user: req.user._id,
+            challenge: challengeId,
+            code,
+            language,
+            successful: true,
+            executionTime: executionResult.data.totalExecutionTime
+          });
 
-          // Prüfe auf Badges
-          await this.checkBadges(req.user._id, challenge);
+          // Prüfen, ob der Benutzer die Challenge bereits gelöst hat
+          const alreadySolved = challenge.solvedBy.includes(req.user._id);
+          
+          if (!alreadySolved) {
+            // Challenge als gelöst markieren
+            challenge.solvedBy.push(req.user._id);
+            challenge.completedBy.push({
+              user: req.user._id,
+              completedAt: new Date()
+            });
+            await challenge.save();
+
+            // Aktualisiere Benutzerstatistiken im Auth-Service
+            await axios.post(
+              `${process.env.AUTH_SERVICE_URL}/api/users/updateStats`,
+              {
+                userId: req.user._id,
+                challengePoints: challenge.points
+              }
+            );
+
+            // Streak aktualisieren
+            const updatedStreak = await dashboardController.updateUserStreak(req.user._id);
+            
+            // Crackers für die gelöste Challenge hinzufügen
+            await dashboardController.addCrackersToUser(
+              req.user._id,
+              challenge.points,
+              'challenge',
+              `Challenge "${challenge.title}" gelöst`
+            );
+            
+            // Achievements prüfen und aktualisieren
+            const newAchievements = await dashboardController.checkAndUpdateAchievements(req.user._id);
+            
+            // Tägliche Aufgaben aktualisieren
+            await Task.updateMany(
+              { 
+                user: req.user._id, 
+                $or: [
+                  { challenge: challengeId },
+                  { 
+                    title: 'Tägliche Challenge',
+                    type: 'daily',
+                    completed: false
+                  }
+                ]
+              },
+              { 
+                $inc: { 'progress.current': 1 },
+                $set: { 
+                  completed: true,
+                  completedAt: new Date()
+                }
+              }
+            );
+            
+            // Prüfe, ob tägliche Aufgaben existieren, sonst generiere neue
+            await dashboardController.generateDailyTasks(req.user._id);
+          } else {
+            // Speichere die Lösung, auch wenn die Challenge bereits gelöst wurde
+            await Submission.create({
+              user: req.user._id,
+              challenge: challengeId,
+              code,
+              language,
+              successful: true,
+              executionTime: executionResult.data.totalExecutionTime
+            });
+          }
+        } else {
+          // Speichere die fehlgeschlagene Lösung
+          await Submission.create({
+            user: req.user._id,
+            challenge: challengeId,
+            code,
+            language,
+            successful: false,
+            error: executionResult.data.results.find(r => !r.passed)?.error || 'Unbekannter Fehler'
+          });
         }
 
         res.status(200).json({

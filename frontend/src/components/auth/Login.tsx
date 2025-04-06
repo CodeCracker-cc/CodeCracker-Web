@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../../store/slices/authSlice';
 import { LoginCredentials } from '../../types';
 import { AppDispatch, RootState } from '../../store';
+import SocialLogin from './SocialLogin';
 
 interface LoginProps {
   onSuccess?: () => void;
@@ -40,53 +41,75 @@ const Login = ({ onSuccess }: LoginProps) => {
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ mt: 1 }}>
-      {error && (
-        <Typography color="error" sx={{ mb: 2 }}>
-          {error}
-        </Typography>
-      )}
+    <Box sx={{ maxWidth: 400, mx: 'auto', p: 2 }}>
+      <Typography variant="h5" component="h1" sx={{ mb: 3, textAlign: 'center' }}>
+        Anmelden
+      </Typography>
       
-      <TextField
-        {...register('email', { 
-          required: 'Email ist erforderlich',
-          pattern: {
-            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-            message: 'Ungültige Email-Adresse'
-          }
-        })}
-        margin="normal"
-        fullWidth
-        label="Email Adresse"
-        error={!!errors.email}
-        helperText={errors.email?.message}
-      />
-      
-      <TextField
-        {...register('password', { 
-          required: 'Passwort ist erforderlich',
-          minLength: {
-            value: 6,
-            message: 'Passwort muss mindestens 6 Zeichen lang sein'
-          }
-        })}
-        margin="normal"
-        fullWidth
-        label="Passwort"
-        type="password"
-        error={!!errors.password}
-        helperText={errors.password?.message}
-      />
-      
-      <Button
-        type="submit"
-        fullWidth
-        variant="contained"
-        sx={{ mt: 3, mb: 2 }}
-        disabled={loading}
-      >
-        {loading ? <CircularProgress size={24} /> : 'Einloggen'}
-      </Button>
+      <Box component="form" onSubmit={handleSubmit(onSubmit)}>
+        {error && (
+          <Typography color="error" sx={{ mb: 2 }}>
+            {error}
+          </Typography>
+        )}
+        
+        <TextField
+          {...register('email', { 
+            required: 'Email ist erforderlich',
+            pattern: {
+              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+              message: 'Ungültige Email-Adresse'
+            }
+          })}
+          margin="normal"
+          fullWidth
+          label="Email Adresse"
+          error={!!errors.email}
+          helperText={errors.email?.message}
+        />
+        
+        <TextField
+          {...register('password', { 
+            required: 'Passwort ist erforderlich',
+            minLength: {
+              value: 6,
+              message: 'Passwort muss mindestens 6 Zeichen lang sein'
+            }
+          })}
+          margin="normal"
+          fullWidth
+          label="Passwort"
+          type="password"
+          error={!!errors.password}
+          helperText={errors.password?.message}
+        />
+        
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          sx={{ mt: 3, mb: 2 }}
+          disabled={loading}
+        >
+          {loading ? <CircularProgress size={24} /> : 'Einloggen'}
+        </Button>
+        
+        <SocialLogin onSuccess={onSuccess} />
+        
+        <Box sx={{ mt: 2, textAlign: 'center' }}>
+          <Typography variant="body2">
+            <a href="/forgot-password" style={{ textDecoration: 'none', color: 'primary.main' }}>
+              Passwort vergessen?
+            </a>
+          </Typography>
+          <Typography variant="body2" sx={{ mt: 1 }}>
+            Noch kein Konto?{' '}
+            <a href="/register" style={{ textDecoration: 'none', color: 'primary.main' }}>
+              Registrieren
+            </a>
+          </Typography>
+        </Box>
+      </Box>
     </Box>
   );
 };

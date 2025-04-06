@@ -11,6 +11,9 @@ export interface User {
   preferences: UserPreferences;
   twoFactorEnabled: boolean;
   createdAt: string;
+  subscription?: 'Free' | 'Basic' | 'Premium' | 'Enterprise';
+  crackers?: number;
+  openTasks?: Task[];
 }
 
 export interface UserStats {
@@ -195,4 +198,16 @@ export interface CommunityState {
   posts: Post[];
   loading: boolean;
   error: string | null;
+}
+
+export interface Task {
+  _id: string;
+  title: string;
+  description: string;
+  dueDate?: string;
+  priority: 'low' | 'medium' | 'high';
+  status: 'open' | 'in_progress' | 'completed';
+  type: 'challenge' | 'exam' | 'learning';
+  points: number;
+  challengeId?: string;
 }

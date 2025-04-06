@@ -206,4 +206,5 @@ declare module '@mui/material' {
   export const CircularProgress: React.FC<any>;
   export const Paper: React.FC<any>;
   export const Avatar: React.FC<any>;
+  export const Divider: React.FC<any>;
 }

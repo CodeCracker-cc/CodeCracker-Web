@@ -28,6 +28,15 @@ router.use('/api/challenges', serviceAuth.authenticateService, createProxyMiddle
   }
 }));
 
+// Dashboard Service Routes (Teil des Challenge-Service)
+router.use('/api/dashboard', serviceAuth.authenticateService, createProxyMiddleware({
+  target: 'http://challenge-service:3000',
+  changeOrigin: true,
+  pathRewrite: {
+    '^/api/dashboard': '/api/dashboard'
+  }
+}));
+
 // Execution Service Routes
 router.use('/api/execute', serviceAuth.authenticateService, createProxyMiddleware({
   target: 'http://execution-service:3000',

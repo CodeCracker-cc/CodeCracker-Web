@@ -26,7 +26,21 @@ const config = {
       'web',
       'database',
       'security'
-    ]
+    ],
+    dashboard: {
+      streakResetHour: 0, // Mitternacht UTC
+      dailyTasksResetHour: 0, // Mitternacht UTC
+      maxDailyTasks: 3,
+      defaultCrackerRewards: {
+        challenge: 10,
+        achievement: 25,
+        dailyTask: 5,
+        streak: {
+          base: 5,
+          multiplier: 1 // Pro Tag im Streak
+        }
+      }
+    }
   },
   execution: {
     port: 3003,
@@ -44,7 +58,21 @@ const config = {
       contentMaxLength: 5000,
       commentsPerPage: 20
     }
+  },
+  database: {
+    uri: 'mongodb://mongodb:27017/codecracker',
+    options: {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    }
+  },
+  jwt: {
+    secret: process.env.JWT_SECRET || 'your-secret-key-for-development',
+    expiresIn: '30d'
+  },
+  service: {
+    secret: process.env.SERVICE_SECRET || 'service-secret-key-for-development'
   }
 };
 
-module.exports = config; 
+module.exports = config;

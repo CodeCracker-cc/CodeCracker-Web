@@ -12,7 +12,7 @@ module.exports = {
     sourceType: 'module'
   },
   rules: {
-    'no-console': ['warn', { allow: ['warn', 'error'] }],
+    'no-console': 'warn',
     'no-unused-vars': ['error', { argsIgnorePattern: '^_' }]
   }
 }; 

@@ -96,10 +96,26 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  socialLogins: {
+    google: {
+      id: String,
+      email: String,
+      name: String,
+      picture: String
+    },
+    github: {
+      id: String,
+      email: String,
+      name: String,
+      avatar: String
+    }
+  },
   createdAt: {
     type: Date,
     default: Date.now
-  }
+  },
+  passwordResetToken: String,
+  passwordResetExpires: Date
 }, {
   timestamps: true
 });

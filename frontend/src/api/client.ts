@@ -57,6 +57,17 @@ export const authApi = {
     api.put<{ status: string, data: { user: User } }>(API_ENDPOINTS.AUTH.UPDATE_PROFILE, data),
   changePassword: (data: { currentPassword: string, newPassword: string }) => 
     api.post<{ status: string, data: { token: string } }>(API_ENDPOINTS.AUTH.CHANGE_PASSWORD, data),
+  forgotPassword: (data: { email: string }) =>
+    api.post<{ status: string, message: string }>(API_ENDPOINTS.AUTH.FORGOT_PASSWORD, data),
+  resetPassword: (data: { token: string, password: string }) =>
+    api.post<{ status: string, data: { token: string } }>(API_ENDPOINTS.AUTH.RESET_PASSWORD, data),
+  // Social Login
+  getGoogleAuthUrl: () => 
+    api.get<{ status: string, data: { url: string } }>(API_ENDPOINTS.AUTH.GOOGLE_AUTH),
+  getGithubAuthUrl: () => 
+    api.get<{ status: string, data: { url: string } }>(API_ENDPOINTS.AUTH.GITHUB_AUTH),
+  socialCallback: (data: { provider: string, code: string }) => 
+    api.post<{ status: string, data: { user: User, token: string } }>(API_ENDPOINTS.AUTH.SOCIAL_CALLBACK, data),
   // @ts-ignore: TypeScript erkennt nicht, dass wir ein leeres Objekt übergeben
   logout: function() {
     const emptyData = {};
@@ -65,18 +76,52 @@ export const authApi = {
 };
 
 export const challengeApi = {
-  getAll: (params?: any) => 
-    api.get<{ status: string, data: { challenges: Challenge[] } }>(API_ENDPOINTS.CHALLENGES.GET_ALL, { params } as AxiosConfig),
+  getAll: () => 
+    api.get<{ status: string, data: { challenges: Challenge[] } }>(API_ENDPOINTS.CHALLENGES.GET_ALL),
   getById: (id: string) => 
     api.get<{ status: string, data: { challenge: Challenge } }>(API_ENDPOINTS.CHALLENGES.GET_BY_ID(id)),
-  submitSolution: (id: string, solution: CodeSubmission) => 
-    api.post<{ status: string, data: { result: ExecutionResult } }>(API_ENDPOINTS.CHALLENGES.SUBMIT_SOLUTION(id), solution),
-  getLeaderboard: () => 
-    api.get<{ status: string, data: { leaderboard: any[] } }>(API_ENDPOINTS.CHALLENGES.GET_LEADERBOARD),
   getByCategory: (category: string) => 
     api.get<{ status: string, data: { challenges: Challenge[] } }>(API_ENDPOINTS.CHALLENGES.GET_BY_CATEGORY(category)),
   getByDifficulty: (difficulty: string) => 
-    api.get<{ status: string, data: { challenges: Challenge[] } }>(API_ENDPOINTS.CHALLENGES.GET_BY_DIFFICULTY(difficulty))
+    api.get<{ status: string, data: { challenges: Challenge[] } }>(API_ENDPOINTS.CHALLENGES.GET_BY_DIFFICULTY(difficulty)),
+  
+  // Dashboard-Daten
+  getDashboardData: () => 
+    api.get<{ status: string, data: any }>(API_ENDPOINTS.DASHBOARD.GET_DASHBOARD_DATA),
+  
+  // Achievements
+  getUserAchievements: () => 
+    api.get<{ status: string, data: { achievements: any[] } }>(API_ENDPOINTS.DASHBOARD.GET_USER_ACHIEVEMENTS),
+  
+  // Streak
+  getUserStreak: () => 
+    api.get<{ status: string, data: { streak: any } }>(API_ENDPOINTS.DASHBOARD.GET_USER_STREAK),
+  
+  // Crackers
+  getUserCrackers: () => 
+    api.get<{ status: string, data: { crackers: number } }>(API_ENDPOINTS.DASHBOARD.GET_USER_CRACKERS),
+  
+  // Tasks
+  getUserOpenTasks: () => 
+    api.get<{ status: string, data: { tasks: any[] } }>(API_ENDPOINTS.DASHBOARD.GET_USER_TASKS),
+  
+  completeTask: (taskId: string) => 
+    api.post<{ status: string, data: any }>(API_ENDPOINTS.DASHBOARD.COMPLETE_TASK.replace(':taskId', taskId), {}),
+  
+  // Weitere Challenge-API-Methoden
+  submitSolution: (challengeId: string, code: string, language: string) => 
+    api.post<{ status: string, data: { submission: any } }>(
+      API_ENDPOINTS.CHALLENGES.SUBMIT_SOLUTION(challengeId), 
+      { code, language }
+    ),
+  getSubmissions: (challengeId: string) => 
+    api.get<{ status: string, data: { submissions: any[] } }>(
+      API_ENDPOINTS.CHALLENGES.GET_SUBMISSIONS(challengeId)
+    ),
+  getLeaderboard: (challengeId: string) => 
+    api.get<{ status: string, data: { leaderboard: any[] } }>(
+      API_ENDPOINTS.CHALLENGES.GET_LEADERBOARD(challengeId)
+    )
 };
 
 export const executionApi = {

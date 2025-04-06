@@ -1,4 +1,4 @@
-import { useEffect, ReactNode } from 'react';
+import React, { useEffect, ReactNode } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../../store';
 import { getProfile } from '../../store/slices/authSlice';
