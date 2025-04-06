@@ -13,24 +13,53 @@
     <!-- AOS Animation -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 </head>
-<body>
+<body></body>
+
     <!-- Particle Background -->
     <div id="particles-js"></div>
     
-    <!-- Glitch Overlay -->
-    <div class="glitch-overlay"></div>
+    <!-- Grid Overlay -->
+    <div class="grid-overlay"></div>
+     
+    
     
     <!-- Welcome -->
     <section class="welcome-section">
         <div class="welcome">
             <h1 class="welcome-to">Welcome To:</h1>
             <div class="title-container">
-                <h1 class="title1 glitch" data-text="Code">Code</h1>
-                <h1 class="title2 glitch" data-text="Cracker">Cracker</h1>
+                <h1 class="title1 " data-text="Code">Code</h1>
+                <h1 class="title2 " data-text="Cracker">Cracker</h1>
             </div>
             <p class="tagline">Unlock your coding potential in the digital matrix</p>
         </div>
     </section>
+
+    <div class="hero-visual" data-aos="fade-left" data-aos-delay="500">
+        <div class="code-window">
+            <div class="window-header">
+                <div class="window-controls">
+                    <span class="control red"></span>
+                    <span class="control yellow"></span>
+                    <span class="control green"></span>
+                </div>
+                <div class="window-title">codecracker.js</div>
+            </div>
+            <div class="code-content">
+                <pre><code class="javascript">// Learn by building real projects
+function unlockPotential() {
+const skills = ['JavaScript', 'React', 'Node.js'];
+return skills.map(skill => 
+`Master ${skill} through interactive challenges`
+);
+}
+
+// Get instant feedback
+const results = unlockPotential();
+console.log(results.join('\n'));</code></pre>
+            </div>
+        </div>
+    </div>
 
     <!-- Main Content -->
     <main class="content-grid">
