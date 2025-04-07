@@ -4,6 +4,7 @@ const consul = require('consul')();
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const path = require('path');
 
 const app = express();
 
@@ -11,7 +12,9 @@ const app = express();
 app.use(morgan('dev'));
 
 // Sicherheitsheader
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: false // Deaktiviert für Entwicklung
+}));
 
 // CORS-Konfiguration
 app.use(cors({
@@ -20,6 +23,11 @@ app.use(cors({
     : ['http://localhost:3000', 'http://localhost:8080'],
   credentials: true
 }));
+
+// Statische Dateien servieren
+const frontendPath = path.join(__dirname, '../../');
+app.use(express.static(frontendPath));
+console.log(`Serving static files from: ${frontendPath}`);
 
 // Service discovery
 const services = {
@@ -53,9 +61,9 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'healthy' });
 });
 
-// 404 Handler
-app.use((req, res) => {
-  res.status(404).json({ error: 'Route nicht gefunden' });
+// Alle anderen Anfragen zur index.html weiterleiten (für SPA-Routing)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
 // Globaler Error Handler
