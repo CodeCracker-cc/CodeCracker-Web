@@ -25,7 +25,7 @@ app.use(cors({
 }));
 
 // Statische Dateien servieren
-const frontendPath = path.join(__dirname, '../../');
+const frontendPath = process.env.FRONTEND_PATH || path.join(__dirname, '../../');
 app.use(express.static(frontendPath));
 console.log(`Serving static files from: ${frontendPath}`);
 
