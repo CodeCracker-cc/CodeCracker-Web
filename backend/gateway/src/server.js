@@ -1,17 +1,23 @@
 const express = require('express');
 const cors = require('cors');
 const { createProxyMiddleware } = require('http-proxy-middleware');
+const path = require('path');
 const app = express();
 
 // CORS für das Frontend erlauben
 app.use(cors({
-    origin: 'http://192.168.178.200', // Die IP-Adresse des Frontends
+    origin: ['http://192.168.178.200', 'http://localhost:3000', 'http://localhost:8080', 'http://10.20.31.31:3000', 'http://10.20.31.31'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
 }));
 
 app.use(express.json());
+
+// Statische Dateien servieren
+const frontendPath = process.env.FRONTEND_PATH || path.join(__dirname, '../../..');
+app.use(express.static(frontendPath));
+console.log(`Serving static files from: ${frontendPath}`);
 
 // Health Check
 app.get('/health', (req, res) => {
@@ -146,19 +152,61 @@ app.use('/api/auth', createProxyMiddleware({
             message: 'Service nicht verfügbar'
         });
     },
-    logLevel: 'debug'  // Füge Debug-Logging hinzu
+    logLevel: 'debug'
 }));
 
-// Proxy Konfiguration für andere Services...
+// Proxy Konfiguration für Challenge Service
 app.use('/api/challenges', createProxyMiddleware({
     target: process.env.CHALLENGE_SERVICE_URL || 'http://challenge-service:3000',
-    changeOrigin: true
+    changeOrigin: true,
+    pathRewrite: {
+        '^/api/challenges': ''
+    },
+    onError: (err, req, res) => {
+        console.error('Proxy Error:', err);
+        res.status(500).json({
+            status: 'error',
+            message: 'Service nicht verfügbar'
+        });
+    }
 }));
 
+// Proxy Konfiguration für Execution Service
 app.use('/api/execute', createProxyMiddleware({
     target: process.env.EXECUTION_SERVICE_URL || 'http://execution-service:3000',
-    changeOrigin: true
+    changeOrigin: true,
+    pathRewrite: {
+        '^/api/execute': ''
+    },
+    onError: (err, req, res) => {
+        console.error('Proxy Error:', err);
+        res.status(500).json({
+            status: 'error',
+            message: 'Service nicht verfügbar'
+        });
+    }
 }));
+
+// Proxy Konfiguration für Community Service
+app.use('/api/community', createProxyMiddleware({
+    target: process.env.COMMUNITY_SERVICE_URL || 'http://community-service:3000',
+    changeOrigin: true,
+    pathRewrite: {
+        '^/api/community': ''
+    },
+    onError: (err, req, res) => {
+        console.error('Proxy Error:', err);
+        res.status(500).json({
+            status: 'error',
+            message: 'Service nicht verfügbar'
+        });
+    }
+}));
+
+// Alle anderen Anfragen zur index.html weiterleiten (für SPA-Routing)
+app.get('*', (req, res) => {
+    res.sendFile(path.join(frontendPath, 'index.html'));
+});
 
 // Error Handler
 app.use((err, req, res, next) => {
@@ -172,5 +220,5 @@ app.use((err, req, res, next) => {
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`API Gateway läuft auf Port ${port}`);
-    console.log('CORS erlaubt für:', 'http://192.168.178.200');
-}); 
+    console.log('CORS erlaubt für:', ['http://192.168.178.200', 'http://localhost:3000', 'http://localhost:8080', 'http://10.20.31.31:3000', 'http://10.20.31.31']);
+});
