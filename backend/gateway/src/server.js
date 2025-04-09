@@ -18,10 +18,12 @@ app.use(express.json());
 const frontendPath = process.env.FRONTEND_PATH || path.join(__dirname, '../../..');
 app.use(express.static(frontendPath));
 
+// Debug-Ausgabe für Pfade
+console.log(`Serving static files from: ${frontendPath}`);
+console.log(`Absolute path to frontend/auth/css: ${path.join(frontendPath, 'frontend/auth/css')}`);
+
 // Zusätzliche statische Pfade für die Auth-Komponente
-app.use('/assets/auth/css', express.static(path.join(frontendPath, 'frontend/auth/css')));
-app.use('/auth/css', express.static(path.join(frontendPath, 'frontend/auth/css')));
-app.use('/css', express.static(path.join(frontendPath, 'frontend/auth/css')));
+app.use('/frontend/auth/css', express.static(path.join(frontendPath, 'frontend/auth/css')));
 
 // Füge eine Catch-All-Route für SPA-Navigation hinzu
 app.use('*', (req, res, next) => {
@@ -42,7 +44,6 @@ app.use('*', (req, res, next) => {
     }
   });
 });
-console.log(`Serving static files from: ${frontendPath}`);
 
 // Health Check
 app.get('/health', (req, res) => {
