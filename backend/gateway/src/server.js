@@ -14,17 +14,12 @@ app.use(cors({
 
 app.use(express.json());
 
-// Statische Dateien servieren
-const frontendPath = process.env.FRONTEND_PATH || path.join(__dirname, '../../..');
-app.use(express.static(frontendPath));
-console.log(`Serving static files from: ${frontendPath}`);
-
 // Health Check
 app.get('/health', (req, res) => {
     res.json({ status: 'healthy' });
 });
 
-// Startseite
+// Startseite - WICHTIG: Diese Route muss VOR der statischen Dateiservierung definiert werden
 app.get('/', (req, res) => {
   res.send(`
     <!DOCTYPE html>
@@ -137,6 +132,11 @@ app.get('/', (req, res) => {
     </html>
   `);
 });
+
+// Statische Dateien servieren - NACH der Startseiten-Route definiert
+const frontendPath = process.env.FRONTEND_PATH || path.join(__dirname, '../../..');
+app.use(express.static(frontendPath));
+console.log(`Serving static files from: ${frontendPath}`);
 
 // Proxy Konfiguration für Auth Service
 app.use('/api/auth', createProxyMiddleware({
