@@ -115,33 +115,57 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Animated counter for stats
-    const counters = document.querySelectorAll('.counter');
-    const speed = 200;
-    
-    counters.forEach(counter => {
-        const updateCount = () => {
-            const target = +counter.getAttribute('data-target');
-            const count = +counter.innerText;
-            const increment = target / speed;
+    async function initCounters() {
+        // Zuerst den aktuellen Count von der API holen
+        try {
+            const response = await fetch('/api/user-count');
+            const data = await response.json();
             
-            if (count < target) {
-                counter.innerText = Math.ceil(count + increment);
-                setTimeout(updateCount, 1);
-            } else {
-                counter.innerText = target.toLocaleString();
-            }
-        };
+            // Counter-Element aktualisieren
+            const counterElement = document.getElementById('student-counter');
+            counterElement.setAttribute('data-target', data.count);
+            
+            // Ihre Counter-Animation starten
+            animateCounters();
+            
+        } catch (error) {
+            console.error('Fehler beim Abrufen der Studentenzahl:', error);
+        }
+    }
+    
+    // Ihre angepasste Counter-Animation
+    function animateCounters() {
+        const counters = document.querySelectorAll('.counter');
+        const speed = 200;
         
-        // Start counter when element is in viewport
-        const observer = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting) {
-                updateCount();
-                observer.unobserve(counter);
-            }
+        counters.forEach(counter => {
+            const updateCount = () => {
+                const target = +counter.getAttribute('data-target');
+                const count = +counter.innerText;
+                const increment = target / speed;
+                
+                if (count < target) {
+                    counter.innerText = Math.ceil(count + increment);
+                    setTimeout(updateCount, 1);
+                } else {
+                    counter.innerText = target.toLocaleString();
+                }
+            };
+            
+            // Start counter when element is in viewport
+            const observer = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) {
+                    updateCount();
+                    observer.unobserve(counter);
+                }
+            });
+            
+            observer.observe(counter);
         });
-        
-        observer.observe(counter);
-    });
+    }
+    
+    // Beim Laden der Seite initialisieren
+    document.addEventListener('DOMContentLoaded', initCounters);
     
     // Current year for copyright
     document.getElementById('year').textContent = new Date().getFullYear();
