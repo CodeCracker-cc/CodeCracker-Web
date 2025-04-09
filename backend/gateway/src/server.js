@@ -136,11 +136,7 @@ app.get('/', (req, res) => {
 // Statische Dateien servieren - NACH der Startseiten-Route definiert
 const frontendPath = process.env.FRONTEND_PATH || path.join(__dirname, '../../..');
 app.use(express.static(frontendPath));
-app.use('/assets', express.static(path.join(frontendPath, 'assets')));
-app.use('/css', express.static(path.join(frontendPath, 'css')));
-app.use('/js', express.static(path.join(frontendPath, 'js')));
 console.log(`Serving static files from: ${frontendPath}`);
-console.log(`Additional static paths: /assets, /css, /js`);
 
 // Proxy Konfiguration für Auth Service
 app.use('/api/auth', createProxyMiddleware({
