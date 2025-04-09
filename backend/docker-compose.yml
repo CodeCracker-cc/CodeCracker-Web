@@ -76,6 +76,7 @@ services:
       - "3000:3000"
     volumes:
       - ../:/usr/src/frontend
+      - ./gateway:/usr/src/app
     environment:
       - AUTH_SERVICE_URL=http://auth-service:3000
       - CHALLENGE_SERVICE_URL=http://challenge-service:3000
