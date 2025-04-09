@@ -73,10 +73,11 @@ services:
   gateway:
     build: ./gateway
     ports:
-      - "3006:3000"
+      - "3000:3000"
     volumes:
       - ../:/usr/src/frontend
       - ./gateway:/usr/src/app
+      - /usr/src/app/node_modules
     environment:
       - AUTH_SERVICE_URL=http://auth-service:3000
       - CHALLENGE_SERVICE_URL=http://challenge-service:3000
