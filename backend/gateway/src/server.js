@@ -17,6 +17,12 @@ app.use(express.json());
 // Statische Dateien servieren - VOR der Startseiten-Route definiert, damit index.html Vorrang hat
 const frontendPath = process.env.FRONTEND_PATH || path.join(__dirname, '../../..');
 app.use(express.static(frontendPath));
+
+// Zusätzliche statische Pfade für die Auth-Komponente
+app.use('/assets/auth/css', express.static(path.join(frontendPath, 'frontend/auth/css')));
+app.use('/auth/css', express.static(path.join(frontendPath, 'frontend/auth/css')));
+app.use('/css', express.static(path.join(frontendPath, 'frontend/auth/css')));
+
 // Füge eine Catch-All-Route für SPA-Navigation hinzu
 app.use('*', (req, res, next) => {
   // Wenn es eine API-Anfrage ist, gehe zur nächsten Middleware
