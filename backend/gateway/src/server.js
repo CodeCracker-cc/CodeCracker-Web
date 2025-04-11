@@ -230,11 +230,11 @@ app.use('/api/community', createProxyMiddleware({
 }));
 
 // Proxy Konfiguration für Newsletter Service
-app.use('/api/newsletter', createProxyMiddleware({
+app.use('/newsletter', createProxyMiddleware({
     target: process.env.NEWSLETTER_SERVICE_URL || 'http://newsletter-service:3004',
     changeOrigin: true,
     pathRewrite: {
-        '^/api/newsletter': ''
+        '^/newsletter': ''
     },
     onError: (err, req, res) => {
         console.error('Proxy Error:', err);
