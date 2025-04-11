@@ -1,10 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CodeCracker - Blog</title>
-    <link rel="stylesheet" href="/frontend/blog/css/style.css">
+    <title>CodeCracker Blog</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Schriftarten einbinden -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome für Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* Fallback-Styling, falls die externe CSS-Datei nicht geladen wird */
         body {
@@ -139,93 +143,204 @@
             text-align: center;
             margin-top: 40px;
         }
+        
+        /* Particle.js Hintergrund */
+        #particles-js {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #1a1a2e;
+            background-image: url('');
+            background-size: cover;
+            background-position: 50% 50%;
+            background-repeat: no-repeat;
+        }
+        
+        /* Grid Overlay */
+        .grid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            grid-template-rows: repeat(12, 1fr);
+            z-index: 1;
+        }
     </style>
 </head>
 <body>
+    <!-- Particle.js Hintergrund -->
+    <div id="particles-js"></div>
+    <!-- Grid Overlay -->
+    <div class="grid-overlay"></div>
+
     <header>
         <div class="logo">CodeCracker</div>
         <nav>
-            <a href="/">Home</a>
-            <a href="/assets/auth/login.html">My Account</a>
-            <a href="#">Start Learning</a>
-            <a href="#">Subscription Plans</a>
-            <a href="#">About Us</a>
-            <a href="#">Contact</a>
-            <a href="/frontend/blog/index.html" class="active">Blog</a>
+            <a href="/"><i class="fas fa-home"></i> Home</a>
+            <a href="/frontend/auth/login.html"><i class="fas fa-sign-in-alt"></i> Login</a>
+            <a href="/frontend/auth/register.html"><i class="fas fa-user-plus"></i> Register</a>
+            <a href="#" class="active"><i class="fas fa-blog"></i> Blog</a>
+            <a href="/frontend/challenges/index.html"><i class="fas fa-code"></i> Challenges</a>
+            <a href="/frontend/community/index.html"><i class="fas fa-users"></i> Community</a>
+            <a href="/frontend/contact/index.html"><i class="fas fa-envelope"></i> Kontakt</a>
         </nav>
     </header>
-    
+
     <div class="container">
         <div class="blog-header">
             <h1 class="blog-title">CodeCracker Blog</h1>
-            <p class="blog-subtitle">Latest news, tutorials, and insights from the coding world</p>
+            <p class="blog-subtitle">Neueste Nachrichten, Tutorials und Einblicke aus der Coding-Welt</p>
         </div>
-        
+
         <div class="blog-grid">
             <div class="blog-card">
                 <div class="blog-image">JavaScript</div>
                 <div class="blog-content">
-                    <div class="blog-date">April 10, 2025</div>
-                    <h2 class="blog-card-title">Mastering JavaScript Promises</h2>
-                    <p class="blog-excerpt">Learn how to handle asynchronous operations effectively with JavaScript Promises. This comprehensive guide will take you from basics to advanced patterns.</p>
-                    <a href="#" class="read-more">Read More</a>
+                    <div class="blog-date">11. April 2025</div>
+                    <h2 class="blog-card-title">Moderne JavaScript-Techniken</h2>
+                    <p class="blog-excerpt">Entdecke die neuesten JavaScript-Features und wie du sie in deinen Projekten einsetzen kannst. Von async/await bis zu den neuesten ES-Features.</p>
+                    <a href="#" class="read-more">Weiterlesen</a>
                 </div>
             </div>
-            
+
             <div class="blog-card">
                 <div class="blog-image">Python</div>
                 <div class="blog-content">
-                    <div class="blog-date">April 8, 2025</div>
-                    <h2 class="blog-card-title">Python for Data Science</h2>
-                    <p class="blog-excerpt">Discover how Python has become the go-to language for data scientists and how you can leverage its powerful libraries for data analysis.</p>
-                    <a href="#" class="read-more">Read More</a>
+                    <div class="blog-date">5. April 2025</div>
+                    <h2 class="blog-card-title">Python für KI-Entwicklung</h2>
+                    <p class="blog-excerpt">Ein umfassender Leitfaden zur Verwendung von Python für maschinelles Lernen und KI-Projekte. Lerne die wichtigsten Bibliotheken kennen.</p>
+                    <a href="#" class="read-more">Weiterlesen</a>
                 </div>
             </div>
-            
+
             <div class="blog-card">
                 <div class="blog-image">React</div>
                 <div class="blog-content">
-                    <div class="blog-date">April 5, 2025</div>
-                    <h2 class="blog-card-title">Building Scalable React Applications</h2>
-                    <p class="blog-excerpt">Learn best practices for structuring your React applications to ensure they remain maintainable and scalable as they grow.</p>
-                    <a href="#" class="read-more">Read More</a>
+                    <div class="blog-date">28. März 2025</div>
+                    <h2 class="blog-card-title">React Hooks in der Praxis</h2>
+                    <p class="blog-excerpt">Wie du mit React Hooks saubereren und effizienteren Code schreiben kannst. Praxisbeispiele und Best Practices für moderne React-Anwendungen.</p>
+                    <a href="#" class="read-more">Weiterlesen</a>
                 </div>
             </div>
-            
+
             <div class="blog-card">
                 <div class="blog-image">Docker</div>
                 <div class="blog-content">
-                    <div class="blog-date">April 3, 2025</div>
-                    <h2 class="blog-card-title">Docker for Developers</h2>
-                    <p class="blog-excerpt">A beginner's guide to Docker and containerization. Learn how to create, deploy, and manage containers for your applications.</p>
-                    <a href="#" class="read-more">Read More</a>
+                    <div class="blog-date">20. März 2025</div>
+                    <h2 class="blog-card-title">Docker für Entwickler</h2>
+                    <p class="blog-excerpt">Eine Einführung in Docker und Container-Technologien. Lerne, wie du deine Entwicklungsumgebung mit Docker optimieren kannst.</p>
+                    <a href="#" class="read-more">Weiterlesen</a>
                 </div>
             </div>
-            
+
             <div class="blog-card">
                 <div class="blog-image">CSS</div>
                 <div class="blog-content">
-                    <div class="blog-date">March 30, 2025</div>
-                    <h2 class="blog-card-title">Advanced CSS Techniques</h2>
-                    <p class="blog-excerpt">Take your CSS skills to the next level with these advanced techniques for creating beautiful and responsive layouts.</p>
-                    <a href="#" class="read-more">Read More</a>
+                    <div class="blog-date">15. März 2025</div>
+                    <h2 class="blog-card-title">Moderne CSS-Techniken</h2>
+                    <p class="blog-excerpt">Von Grid und Flexbox bis zu CSS-Variablen und Custom Properties. Entdecke, wie du mit modernem CSS beeindruckende Layouts erstellen kannst.</p>
+                    <a href="#" class="read-more">Weiterlesen</a>
                 </div>
             </div>
-            
+
             <div class="blog-card">
                 <div class="blog-image">Node.js</div>
                 <div class="blog-content">
-                    <div class="blog-date">March 28, 2025</div>
-                    <h2 class="blog-card-title">Building RESTful APIs with Node.js</h2>
-                    <p class="blog-excerpt">Learn how to create robust and scalable RESTful APIs using Node.js, Express, and MongoDB.</p>
-                    <a href="#" class="read-more">Read More</a>
+                    <div class="blog-date">8. März 2025</div>
+                    <h2 class="blog-card-title">Microservices mit Node.js</h2>
+                    <p class="blog-excerpt">Ein praktischer Leitfaden zum Aufbau skalierbarer Microservices-Architekturen mit Node.js, Express und Docker.</p>
+                    <a href="#" class="read-more">Weiterlesen</a>
                 </div>
             </div>
         </div>
     </div>
-    
+
     <footer>
-        <p>&copy; 2025 CodeCracker. All rights reserved.</p>
+        <p>&copy; 2025 CodeCracker. Alle Rechte vorbehalten.</p>
     </footer>
+
+    <!-- Particle.js Script -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            particlesJS('particles-js', {
+                "particles": {
+                    "number": {
+                        "value": 80,
+                        "density": {
+                            "enable": true,
+                            "value_area": 800
+                        }
+                    },
+                    "color": {
+                        "value": "#00f0ff"
+                    },
+                    "shape": {
+                        "type": "circle",
+                        "stroke": {
+                            "width": 0,
+                            "color": "#000000"
+                        }
+                    },
+                    "opacity": {
+                        "value": 0.5,
+                        "random": true
+                    },
+                    "size": {
+                        "value": 3,
+                        "random": true
+                    },
+                    "line_linked": {
+                        "enable": true,
+                        "distance": 150,
+                        "color": "#00f0ff",
+                        "opacity": 0.2,
+                        "width": 1
+                    },
+                    "move": {
+                        "enable": true,
+                        "speed": 1,
+                        "direction": "none",
+                        "random": true,
+                        "straight": false,
+                        "out_mode": "out",
+                        "bounce": false
+                    }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": {
+                        "onhover": {
+                            "enable": true,
+                            "mode": "grab"
+                        },
+                        "onclick": {
+                            "enable": true,
+                            "mode": "push"
+                        },
+                        "resize": true
+                    },
+                    "modes": {
+                        "grab": {
+                            "distance": 140,
+                            "line_linked": {
+                                "opacity": 0.8
+                            }
+                        },
+                        "push": {
+                            "particles_nb": 4
+                        }
+                    }
+                },
+                "retina_detect": true
+            });
+        });
+    </script>
 </body>
 </html>
