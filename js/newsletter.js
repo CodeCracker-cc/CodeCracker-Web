@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
             newsletterForm.classList.add('loading');
             
             // API-Anfrage an den Newsletter-Service senden
-            fetch('/api/newsletter/subscribe', {
+            fetch('/newsletter/subscribe', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

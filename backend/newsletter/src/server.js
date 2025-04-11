@@ -25,7 +25,7 @@ mongoose
 const subscribers = [];
 
 // Routes
-app.post('/api/newsletter/subscribe', async (req, res) => {
+app.post('/subscribe', async (req, res) => {
   try {
     const { email } = req.body;
     
@@ -62,7 +62,7 @@ app.post('/api/newsletter/subscribe', async (req, res) => {
 });
 
 // Get all subscribers (protected, for admin use)
-app.get('/api/newsletter/subscribers', async (req, res) => {
+app.get('/subscribers', async (req, res) => {
   try {
     let subscriberList = [];
     
@@ -84,7 +84,7 @@ app.get('/api/newsletter/subscribers', async (req, res) => {
 });
 
 // Unsubscribe
-app.delete('/api/newsletter/unsubscribe', async (req, res) => {
+app.delete('/unsubscribe', async (req, res) => {
   try {
     const { email } = req.body;
     
