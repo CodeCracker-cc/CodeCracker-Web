@@ -16,7 +16,13 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() => console.log('MongoDB connected'))
-  .catch(err => console.error('MongoDB connection error:', err));
+  .catch(err => {
+    console.error('MongoDB connection error:', err);
+    console.log('Continuing without database connection for testing purposes');
+  });
+
+// Temporärer Speicher für Abonnenten, falls die Datenbankverbindung fehlschlägt
+const subscribers = [];
 
 // Routes
 app.post('/api/newsletter/subscribe', async (req, res) => {
@@ -27,15 +33,26 @@ app.post('/api/newsletter/subscribe', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Email is required' });
     }
 
-    // Check if email already exists
-    const existingSubscriber = await Newsletter.findOne({ email });
-    if (existingSubscriber) {
-      return res.status(400).json({ success: false, message: 'Email already subscribed' });
-    }
+    // Versuche, in der Datenbank zu speichern, falls verbunden
+    try {
+      // Check if email already exists
+      const existingSubscriber = await Newsletter.findOne({ email });
+      if (existingSubscriber) {
+        return res.status(400).json({ success: false, message: 'Email already subscribed' });
+      }
 
-    // Create new subscriber
-    const newSubscriber = new Newsletter({ email });
-    await newSubscriber.save();
+      // Create new subscriber
+      const newSubscriber = new Newsletter({ email });
+      await newSubscriber.save();
+    } catch (dbError) {
+      console.error('Database operation failed, using in-memory storage:', dbError);
+      
+      // Fallback: Speichere im temporären Speicher
+      if (subscribers.includes(email)) {
+        return res.status(400).json({ success: false, message: 'Email already subscribed' });
+      }
+      subscribers.push(email);
+    }
 
     return res.status(201).json({ success: true, message: 'Successfully subscribed to newsletter' });
   } catch (error) {
@@ -47,8 +64,19 @@ app.post('/api/newsletter/subscribe', async (req, res) => {
 // Get all subscribers (protected, for admin use)
 app.get('/api/newsletter/subscribers', async (req, res) => {
   try {
-    const subscribers = await Newsletter.find().select('-__v');
-    return res.status(200).json({ success: true, data: subscribers });
+    let subscriberList = [];
+    
+    // Versuche, aus der Datenbank zu lesen, falls verbunden
+    try {
+      subscriberList = await Newsletter.find().select('-__v');
+    } catch (dbError) {
+      console.error('Database operation failed, using in-memory storage:', dbError);
+      
+      // Fallback: Verwende temporären Speicher
+      subscriberList = subscribers.map(email => ({ email, subscribeDate: new Date(), active: true }));
+    }
+    
+    return res.status(200).json({ success: true, data: subscriberList });
   } catch (error) {
     console.error('Error fetching subscribers:', error);
     return res.status(500).json({ success: false, message: 'Internal server error' });
@@ -64,10 +92,22 @@ app.delete('/api/newsletter/unsubscribe', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Email is required' });
     }
 
-    const result = await Newsletter.findOneAndDelete({ email });
-    
-    if (!result) {
-      return res.status(404).json({ success: false, message: 'Email not found in subscribers list' });
+    // Versuche, aus der Datenbank zu löschen, falls verbunden
+    try {
+      const result = await Newsletter.findOneAndDelete({ email });
+      
+      if (!result) {
+        return res.status(404).json({ success: false, message: 'Email not found in subscribers list' });
+      }
+    } catch (dbError) {
+      console.error('Database operation failed, using in-memory storage:', dbError);
+      
+      // Fallback: Entferne aus temporärem Speicher
+      const index = subscribers.indexOf(email);
+      if (index === -1) {
+        return res.status(404).json({ success: false, message: 'Email not found in subscribers list' });
+      }
+      subscribers.splice(index, 1);
     }
 
     return res.status(200).json({ success: true, message: 'Successfully unsubscribed from newsletter' });
