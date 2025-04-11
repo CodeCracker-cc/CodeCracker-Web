@@ -16,8 +16,8 @@ services:
     image: mongo:latest
     ports:
       - "27018:27017"
-    volumes:
-      - mongodb_data:/data/db
+    # volumes:
+    #   - mongodb_data:/data/db
 
   challenge-service:
     build: ./services/challenge-service
@@ -103,5 +103,5 @@ services:
       - newsletter-service
 
 volumes:
-  mongodb_data:
+  # mongodb_data:
   redis_data:
