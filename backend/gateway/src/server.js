@@ -14,36 +14,13 @@ app.use(cors({
 
 app.use(express.json());
 
-// Statische Dateien servieren - VOR der Startseiten-Route definiert, damit index.html Vorrang hat
-const frontendPath = process.env.FRONTEND_PATH || path.join(__dirname, '../../..');
-app.use(express.static(frontendPath));
-
 // Debug-Ausgabe für Pfade
+const frontendPath = process.env.FRONTEND_PATH || path.join(__dirname, '../../..');
 console.log(`Serving static files from: ${frontendPath}`);
 console.log(`Absolute path to frontend/auth/css: ${path.join(frontendPath, 'frontend/auth/css')}`);
 
 // Zusätzliche statische Pfade für die Auth-Komponente
 app.use('/frontend/auth/css', express.static(path.join(frontendPath, 'frontend/auth/css')));
-
-// Füge eine Catch-All-Route für SPA-Navigation hinzu
-app.use('*', (req, res, next) => {
-  // Wenn es eine API-Anfrage ist, gehe zur nächsten Middleware
-  if (req.originalUrl.startsWith('/api')) {
-    return next();
-  }
-  
-  // Für alle anderen Anfragen, versuche die Datei zu finden
-  const filePath = path.join(frontendPath, req.originalUrl);
-  console.log(`Trying to serve: ${filePath}`);
-  
-  // Wenn die Datei nicht existiert und es keine API-Anfrage ist, sende die index.html
-  res.sendFile(path.join(frontendPath, 'index.html'), (err) => {
-    if (err) {
-      console.error(`Error sending file: ${err.message}`);
-      next(err);
-    }
-  });
-});
 
 // Health Check
 app.get('/health', (req, res) => {
@@ -244,6 +221,9 @@ app.use('/newsletter', createProxyMiddleware({
         });
     }
 }));
+
+// Statische Dateien aus dem Frontend-Verzeichnis bereitstellen
+app.use(express.static(frontendPath));
 
 // Alle anderen Anfragen zur index.html weiterleiten (für SPA-Routing)
 app.get('*', (req, res) => {
