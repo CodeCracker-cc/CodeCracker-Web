@@ -234,7 +234,7 @@ app.use('/api/newsletter', createProxyMiddleware({
     target: process.env.NEWSLETTER_SERVICE_URL || 'http://newsletter-service:3004',
     changeOrigin: true,
     pathRewrite: {
-        '^/api/newsletter': '/api/newsletter'
+        '^/api/newsletter': ''
     },
     onError: (err, req, res) => {
         console.error('Proxy Error:', err);

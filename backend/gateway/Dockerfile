@@ -9,11 +9,9 @@ RUN npm install
 
 COPY . .
 
-# Erstelle Frontend-Verzeichnis
-RUN mkdir -p /usr/src/frontend
-
-# Kopiere Frontend-Dateien (wird beim Build-Prozess ausgeführt)
-COPY ../../frontend /usr/src/frontend
+# Entferne den Versuch, das Frontend zu kopieren
+# RUN mkdir -p /usr/src/frontend
+# COPY ../../frontend /usr/src/frontend
 
 EXPOSE 3000
 
