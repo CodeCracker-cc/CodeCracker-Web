@@ -53,6 +53,15 @@ services:
       - mongodb
       - auth-service
 
+  newsletter-service:
+    build: ./newsletter
+    ports:
+      - "3006:3004"
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/codecracker
+    depends_on:
+      - mongodb
+
   redis:
     image: redis:alpine
     ports:
@@ -69,6 +78,7 @@ services:
       - challenge-service
       - execution-service
       - community-service
+      - newsletter-service
 
   gateway:
     build: ./gateway
@@ -83,12 +93,14 @@ services:
       - CHALLENGE_SERVICE_URL=http://challenge-service:3000
       - EXECUTION_SERVICE_URL=http://execution-service:3000
       - COMMUNITY_SERVICE_URL=http://community-service:3000
+      - NEWSLETTER_SERVICE_URL=http://newsletter-service:3004
       - FRONTEND_PATH=/usr/src/frontend
     depends_on:
       - auth-service
       - challenge-service
       - execution-service
       - community-service
+      - newsletter-service
 
 volumes:
   mongodb_data:

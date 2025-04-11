@@ -64,45 +64,64 @@ header {
     text-align: center;
     position: relative;
     z-index: 10;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
 }
 
 .logo {
     font-family: 'Orbitron', sans-serif;
-    font-size: 2em;
+    font-size: 2.5em;
     color: var(--primary);
-    text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
-    margin-bottom: 10px;
+    text-shadow: 0 0 15px rgba(0, 240, 255, 0.7);
+    margin-bottom: 15px;
     position: relative;
+    display: inline-block;
+    letter-spacing: 2px;
+    font-weight: 700;
 }
 
 .logo::after {
     content: '';
     position: absolute;
-    bottom: -5px;
+    bottom: -8px;
     left: 50%;
     transform: translateX(-50%);
-    width: 50px;
-    height: 2px;
+    width: 80px;
+    height: 3px;
     background: linear-gradient(90deg, var(--primary), var(--secondary));
+    border-radius: 3px;
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
 }
 
 nav {
     display: flex;
     justify-content: center;
-    margin-top: 10px;
+    margin-top: 15px;
     flex-wrap: wrap;
+    gap: 10px;
 }
 
 nav a {
     font-family: 'Rajdhani', sans-serif;
     color: var(--light);
     text-decoration: none;
-    margin: 0 15px;
-    padding: 5px 10px;
+    margin: 0 5px;
+    padding: 8px 15px;
     border-radius: 5px;
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+nav a i {
+    font-size: 1.1em;
+    color: var(--primary);
+    transition: all 0.3s ease;
 }
 
 nav a::before {
@@ -115,6 +134,7 @@ nav a::before {
     background: linear-gradient(90deg, var(--primary), var(--secondary));
     transform: translateX(-100%);
     transition: transform 0.3s ease;
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
 }
 
 nav a:hover::before, nav a.active::before {
@@ -124,11 +144,17 @@ nav a:hover::before, nav a.active::before {
 nav a:hover, nav a.active {
     color: var(--primary);
     background-color: rgba(0, 240, 255, 0.1);
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+nav a:hover i, nav a.active i {
+    transform: scale(1.2);
 }
 
 .container {
     max-width: 1200px;
-    margin: 20px auto;
+    margin: 40px auto;
     padding: 0 20px;
     position: relative;
     z-index: 1;
@@ -136,31 +162,84 @@ nav a:hover, nav a.active {
 
 .blog-header {
     text-align: center;
-    margin-bottom: 40px;
-    padding: 30px 0;
+    margin-bottom: 60px;
+    padding: 40px 0;
+    position: relative;
+}
+
+.blog-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    border-radius: 3px;
+}
+
+.blog-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--secondary), var(--primary));
+    border-radius: 3px;
 }
 
 .blog-title {
     font-family: 'Orbitron', sans-serif;
-    font-size: 2.5em;
+    font-size: 3.5em;
     color: var(--primary);
-    margin-bottom: 10px;
-    text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+    margin-bottom: 20px;
+    text-shadow: 0 0 15px rgba(0, 240, 255, 0.7);
     position: relative;
+    letter-spacing: 2px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.blog-title::before {
+    content: 'CodeCracker';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    color: var(--secondary);
+    opacity: 0.3;
+    filter: blur(4px);
+    animation: glitch 5s infinite alternate;
+}
+
+@keyframes glitch {
+    0%, 100% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(2px, -2px); }
+    60% { transform: translate(-2px, -2px); }
+    80% { transform: translate(2px, 2px); }
 }
 
 .blog-subtitle {
     font-family: 'Rajdhani', sans-serif;
-    font-size: 1.2em;
+    font-size: 1.4em;
     color: var(--light);
-    max-width: 600px;
+    max-width: 700px;
     margin: 0 auto;
+    line-height: 1.5;
+    letter-spacing: 0.5px;
+    font-weight: 300;
 }
 
 .blog-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 30px;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 40px;
+    perspective: 1000px;
 }
 
 .blog-card {
@@ -168,9 +247,11 @@ nav a:hover, nav a.active {
     border-radius: var(--border-radius-md);
     overflow: hidden;
     box-shadow: var(--shadow-md);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     border: 1px solid rgba(255, 255, 255, 0.1);
     position: relative;
+    transform-style: preserve-3d;
+    height: 100%;
 }
 
 .blog-card::before {
@@ -182,13 +263,14 @@ nav a:hover, nav a.active {
     height: 100%;
     background: linear-gradient(135deg, rgba(0, 240, 255, 0.1) 0%, rgba(255, 0, 240, 0.1) 100%);
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.4s ease;
     pointer-events: none;
+    z-index: 1;
 }
 
 .blog-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-lg);
+    transform: translateY(-10px) rotateX(5deg) rotateY(-5deg);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 240, 255, 0.3);
 }
 
 .blog-card:hover::before {
@@ -197,68 +279,117 @@ nav a:hover, nav a.active {
 
 .blog-image {
     width: 100%;
-    height: 200px;
+    height: 220px;
     background-color: var(--dark);
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--primary);
     font-family: 'Orbitron', sans-serif;
-    font-size: 1.5em;
-    text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+    font-size: 2em;
+    text-shadow: 0 0 15px rgba(0, 240, 255, 0.7);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     position: relative;
     overflow: hidden;
+    font-weight: 700;
+    letter-spacing: 2px;
+    flex-direction: column;
+    gap: 10px;
 }
 
-.blog-image::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, rgba(0, 240, 255, 0.2) 0%, rgba(255, 0, 240, 0.2) 100%);
-    opacity: 0.3;
+.blog-image i {
+    font-size: 3em;
+    margin-bottom: 10px;
+    transition: all 0.5s ease;
+    filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.7));
+}
+
+.blog-card:hover .blog-image i {
+    transform: scale(1.2) rotate(5deg);
+    color: var(--secondary);
+}
+
+.blog-image span {
+    font-size: 1.2em;
+    letter-spacing: 3px;
+    text-transform: uppercase;
 }
 
 .blog-content {
-    padding: 20px;
+    padding: 25px;
+    position: relative;
+    z-index: 2;
 }
 
 .blog-date {
     color: var(--primary);
-    font-size: 0.9em;
-    margin-bottom: 10px;
+    font-size: 1em;
+    margin-bottom: 15px;
     font-family: 'Rajdhani', sans-serif;
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+}
+
+.blog-date::before {
+    content: '\f073';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    margin-right: 8px;
+    font-size: 0.9em;
 }
 
 .blog-card-title {
     font-family: 'Orbitron', sans-serif;
-    font-size: 1.5em;
-    margin-bottom: 10px;
+    font-size: 1.6em;
+    margin-bottom: 15px;
     color: var(--light);
+    line-height: 1.3;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.blog-card:hover .blog-card-title {
+    color: var(--primary);
 }
 
 .blog-excerpt {
     font-family: 'Rajdhani', sans-serif;
     color: var(--gray);
-    margin-bottom: 20px;
-    line-height: 1.5;
+    margin-bottom: 25px;
+    line-height: 1.6;
+    font-size: 1.1em;
+    font-weight: 300;
 }
 
 .read-more {
     display: inline-block;
     background-color: rgba(15, 52, 96, 0.8);
     color: var(--light);
-    padding: 8px 15px;
+    padding: 10px 20px;
     border-radius: var(--border-radius-sm);
     text-decoration: none;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     font-family: 'Rajdhani', sans-serif;
     position: relative;
     overflow: hidden;
     z-index: 1;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: fit-content;
+}
+
+.read-more i {
+    transition: transform 0.3s ease;
+}
+
+.read-more:hover i {
+    transform: translateX(5px);
 }
 
 .read-more::before {
@@ -272,7 +403,7 @@ nav a:hover, nav a.active {
     z-index: -1;
     transform: scaleX(0);
     transform-origin: left;
-    transition: transform 0.3s ease;
+    transition: transform 0.4s ease;
 }
 
 .read-more:hover::before {
@@ -281,32 +412,83 @@ nav a:hover, nav a.active {
 
 .read-more:hover {
     color: var(--darker);
-    box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.7);
+    transform: translateY(-3px);
 }
 
 footer {
-    background-color: rgba(15, 52, 96, 0.5);
+    background-color: rgba(10, 10, 18, 0.8);
     backdrop-filter: blur(10px);
-    padding: 20px;
+    padding: 30px;
     text-align: center;
-    margin-top: 40px;
+    margin-top: 80px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     font-family: 'Rajdhani', sans-serif;
     color: var(--gray);
+    position: relative;
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.3);
+}
+
+footer p {
+    font-size: 1.1em;
+    letter-spacing: 0.5px;
+}
+
+footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    border-radius: 3px;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
     .blog-grid {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 30px;
     }
     
     nav {
         flex-direction: column;
+        gap: 8px;
     }
     
     nav a {
-        margin: 5px 0;
+        margin: 0;
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .blog-title {
+        font-size: 2.5em;
+    }
+    
+    .blog-subtitle {
+        font-size: 1.2em;
+    }
+}
+
+@media (max-width: 480px) {
+    .blog-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .blog-title {
+        font-size: 2em;
+    }
+    
+    .container {
+        margin: 20px auto;
+    }
+    
+    .blog-header {
+        margin-bottom: 40px;
+        padding: 30px 0;
     }
 }
 

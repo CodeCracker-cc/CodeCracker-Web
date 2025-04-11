@@ -229,6 +229,22 @@ app.use('/api/community', createProxyMiddleware({
     }
 }));
 
+// Proxy Konfiguration für Newsletter Service
+app.use('/api/newsletter', createProxyMiddleware({
+    target: process.env.NEWSLETTER_SERVICE_URL || 'http://newsletter-service:3004',
+    changeOrigin: true,
+    pathRewrite: {
+        '^/api/newsletter': '/api/newsletter'
+    },
+    onError: (err, req, res) => {
+        console.error('Proxy Error:', err);
+        res.status(500).json({
+            status: 'error',
+            message: 'Newsletter-Service nicht verfügbar'
+        });
+    }
+}));
+
 // Alle anderen Anfragen zur index.html weiterleiten (für SPA-Routing)
 app.get('*', (req, res) => {
     res.sendFile(path.join(frontendPath, 'index.html'));
